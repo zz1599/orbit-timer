@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>二级轨道定时器</title>
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg1:#091426;
+  --bg2:#030712;
+  --screen1:#0d192b;
+  --screen2:#07111f;
+  --panel:#122139;
+  --panel2:#17263d;
+  --line:rgba(148,163,184,.16);
+  --text:#f8fafc;
+  --sub:#94a3b8;
+  --blue:#38bdf8;
+  --blue2:#2563eb;
+  --violet:#a78bfa;
+  --green:#22c55e;
+  --orange:#f59e0b;
+}
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+body{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 50% 8%,rgba(56,189,248,.14),transparent 30%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+}
+.device{
+  width:240px;
+  height:240px;
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  background:
+    linear-gradient(160deg,rgba(255,255,255,.05),transparent 35%),
+    linear-gradient(180deg,var(--screen1),var(--screen2));
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 24px 60px rgba(2,8,23,.55),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  user-select:none;
+}
+.device::before{
+  content:"";
+  position:absolute;
+  right:-48px;
+  top:-48px;
+  width:130px;
+  height:130px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,.24),transparent 68%);
+  pointer-events:none;
+}
+.device::after{
+  content:"";
+  position:absolute;
+  left:-56px;
+  bottom:-58px;
+  width:138px;
+  height:138px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(56,189,248,.11),transparent 70%);
+  pointer-events:none;
+}
+
+.page{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  transition:
+    transform .42s cubic-bezier(.2,.76,.2,1),
+    opacity .32s ease,
+    filter .42s ease;
+}
+.home-page{
+  transform:translateX(0) scale(1);
+  opacity:1;
+}
+.timer-page{
+  transform:translateX(100%) scale(.94);
+  opacity:0;
+  pointer-events:none;
+}
+.device.show-timer .home-page{
+  transform:translateX(-36%) scale(.92);
+  opacity:0;
+  filter:blur(4px);
+  pointer-events:none;
+}
+.device.show-timer .timer-page{
+  transform:translateX(0) scale(1);
+  opacity:1;
+  pointer-events:auto;
+}
+
+/* 一级首页 */
+.home-top{
+  height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 12px 0;
+}
+.home-title{
+  font-size:13px;
+  color:#cbd5e1;
+  font-weight:750;
+}
+.home-lang{
+  min-width:40px;
+  height:25px;
+  border-radius:9px;
+  border:1px solid rgba(56,189,248,.18);
+  background:rgba(15,23,42,.45);
+  color:#7dd3fc;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+.home-content{
+  height:196px;
+  display:grid;
+  place-items:center;
+  padding:6px 16px 18px;
+}
+.timer-entry{
+  width:170px;
+  height:154px;
+  border:1px solid rgba(56,189,248,.18);
+  border-radius:28px;
+  background:
+    linear-gradient(145deg,rgba(56,189,248,.12),rgba(37,99,235,.08)),
+    rgba(11,22,38,.82);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  color:var(--text);
+  box-shadow:
+    0 18px 40px rgba(2,8,23,.28),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  transition:transform .2s ease,border-color .2s ease,box-shadow .2s ease;
+}
+.timer-entry:hover{
+  transform:translateY(-2px);
+  border-color:rgba(56,189,248,.32);
+  box-shadow:
+    0 22px 44px rgba(2,8,23,.34),
+    0 0 24px rgba(56,189,248,.08);
+}
+.timer-entry:active{transform:scale(.97)}
+.entry-icon{
+  width:76px;
+  height:76px;
+  border-radius:24px;
+  display:grid;
+  place-items:center;
+  color:#7dd3fc;
+  background:
+    radial-gradient(circle at 35% 30%,rgba(255,255,255,.14),transparent 28%),
+    linear-gradient(145deg,rgba(56,189,248,.20),rgba(37,99,235,.20));
+  border:1px solid rgba(56,189,248,.22);
+  box-shadow:
+    0 0 28px rgba(56,189,248,.10),
+    inset 0 1px 0 rgba(255,255,255,.06);
+  position:relative;
+}
+.entry-icon::before,
+.entry-icon::after{
+  content:"";
+  position:absolute;
+  top:-5px;
+  width:23px;
+  height:14px;
+  border:4px solid #7dd3fc;
+  border-bottom:0;
+  border-radius:14px 14px 0 0;
+  opacity:.9;
+}
+.entry-icon::before{left:5px;transform:rotate(-26deg)}
+.entry-icon::after{right:5px;transform:rotate(26deg)}
+.entry-icon svg{width:42px;height:42px}
+.entry-name{
+  margin-top:15px;
+  font-size:21px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+.entry-sub{
+  margin-top:5px;
+  font-size:10px;
+  color:var(--sub);
+}
+
+/* 二级定时页面 */
+.timer-topbar{
+  height:40px;
+  display:grid;
+  grid-template-columns:34px 1fr 40px;
+  align-items:center;
+  padding:9px 10px 0;
+}
+.back-btn{
+  width:28px;
+  height:28px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:rgba(15,23,42,.48);
+  color:#dbeafe;
+  display:grid;
+  place-items:center;
+  font-size:18px;
+  cursor:pointer;
+  padding:0;
+}
+.back-btn:active{transform:scale(.94)}
+.timer-title{
+  text-align:center;
+  font-size:15px;
+  font-weight:850;
+}
+.timer-lang{
+  min-width:40px;
+  height:25px;
+  border-radius:9px;
+  border:1px solid rgba(56,189,248,.18);
+  background:rgba(15,23,42,.45);
+  color:#7dd3fc;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+.status{
+  height:22px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  color:var(--sub);
+  font-size:10px;
+}
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#64748b;
+}
+.device.enabled .dot{
+  background:var(--green);
+  box-shadow:0 0 10px rgba(34,197,94,.55);
+}
+.device.finished .dot{
+  background:var(--orange);
+  box-shadow:0 0 10px rgba(245,158,11,.55);
+}
+
+.orbit-area{
+  height:143px;
+  display:grid;
+  place-items:center;
+  position:relative;
+}
+.orbit-stack{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+.orbit-stack.left{left:7px}
+.orbit-stack.right{right:7px}
+.orbit-stack-label{
+  font-size:9px;
+  color:var(--sub);
+  letter-spacing:.05em;
+}
+.orbit-control{
+  width:32px;
+  height:26px;
+  border-radius:9px;
+  border:1px solid var(--line);
+  background:#17263d;
+  color:white;
+  font-size:15px;
+  cursor:pointer;
+}
+.orbit-control:disabled{
+  opacity:.28;
+  cursor:not-allowed;
+}
+.orbit{
+  width:118px;
+  height:118px;
+  position:relative;
+  border-radius:50%;
+  border:1px solid rgba(56,189,248,.16);
+}
+.orbit-ring{
+  position:absolute;
+  inset:9px;
+  border-radius:50%;
+  border:1px dashed rgba(125,211,252,.28);
+  will-change:transform;
+}
+.orbit-ring.two{inset:21px}
+.orbit-dot{
+  position:absolute;
+  top:-4px;
+  left:50%;
+  width:9px;
+  height:9px;
+  margin-left:-4.5px;
+  border-radius:50%;
+  background:var(--blue);
+  box-shadow:0 0 14px rgba(56,189,248,.8);
+}
+.orbit-ring.two .orbit-dot{
+  background:var(--violet);
+  box-shadow:0 0 14px rgba(167,139,250,.8);
+}
+.orbit-center{
+  position:absolute;
+  inset:31px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(56,189,248,.10),rgba(8,17,31,.95));
+  border:1px solid rgba(255,255,255,.05);
+  display:grid;
+  place-items:center;
+  text-align:center;
+}
+.orbit-time{
+  font-size:22px;
+  font-weight:900;
+  letter-spacing:-.05em;
+}
+.orbit-sec{
+  font-size:10px;
+  color:#7dd3fc;
+  margin-top:3px;
+}
+
+.footer-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  padding:2px 12px 8px;
+}
+.action{
+  height:32px;
+  border-radius:10px;
+  font-size:12px;
+  font-weight:800;
+  cursor:pointer;
+}
+.start-btn{
+  border:0;
+  color:#fff;
+  background:linear-gradient(135deg,#0ea5e9,#2563eb);
+}
+.stop-btn{
+  border:1px solid var(--line);
+  color:#dbeafe;
+  background:#17263d;
+}
+.action:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+/* 到时动画 */
+.alarm-icon{
+  display:inline-grid;
+  place-items:center;
+  vertical-align:middle;
+  margin-right:2px;
+  color:#7dd3fc;
+  transform-origin:50% 12%;
+}
+.title-bell{
+  transform-origin:50% 10%;
+  transform-box:fill-box;
+}
+.title-bell svg{
+  display:block;
+  overflow:visible;
+}
+.ringing .title-bell{
+  animation:titleBellSwing .55s ease-in-out infinite;
+}
+@keyframes titleBellSwing{
+  0%,100%{transform:rotate(0deg) scale(1)}
+  15%{transform:rotate(18deg) scale(1.03)}
+  30%{transform:rotate(-16deg) scale(1.03)}
+  45%{transform:rotate(13deg) scale(1.02)}
+  60%{transform:rotate(-11deg) scale(1.02)}
+  75%{transform:rotate(8deg) scale(1.01)}
+  90%{transform:rotate(-5deg) scale(1.01)}
+}
+.ringing .alarm-icon{
+  animation:ring .65s ease-in-out infinite;
+}
+@keyframes ring{
+  0%,100%{transform:rotate(0)}
+  15%{transform:rotate(18deg)}
+  30%{transform:rotate(-16deg)}
+  45%{transform:rotate(12deg)}
+  60%{transform:rotate(-10deg)}
+  75%{transform:rotate(7deg)}
+  90%{transform:rotate(-4deg)}
+}
+.finished-flash{
+  animation:finishFlash 1s ease-in-out infinite;
+}
+@keyframes finishFlash{
+  0%,100%{
+    box-shadow:
+      0 24px 60px rgba(2,8,23,.55),
+      inset 0 1px 0 rgba(255,255,255,.06)
+  }
+  50%{
+    box-shadow:
+      0 0 0 4px rgba(245,158,11,.16),
+      0 0 34px rgba(245,158,11,.26)
+  }
+}
+.toast{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  bottom:10px;
+  transform:translate(-50%,10px);
+  background:rgba(2,6,23,.94);
+  border:1px solid var(--line);
+  color:#e2e8f0;
+  padding:6px 9px;
+  border-radius:9px;
+  font-size:10px;
+  opacity:0;
+  pointer-events:none;
+  transition:.18s;
+  white-space:nowrap;
+}
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+</style>
+</head>
+<body>
+<div class="device" id="device">
+
+  <!-- 一级首页 -->
+  <section class="page home-page" id="homePage">
+    <div class="home-top">
+      <div class="home-title" id="homeTitle">设备控制</div>
+      <button class="home-lang" id="homeLang">EN</button>
+    </div>
+
+    <div class="home-content">
+      <button class="timer-entry" id="timerEntry">
+        <div class="entry-icon alarm-icon" id="homeAlarmIcon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="13" r="7"></circle>
+            <path d="M12 9v4l2.5 1.5"></path>
+            <path d="M5 5 3.5 6.5"></path>
+            <path d="m19 5 1.5 1.5"></path>
+            <path d="M7 20 5.5 22"></path>
+            <path d="M17 20 18.5 22"></path>
+          </svg>
+        </div>
+        <div class="entry-name" id="entryName">定时</div>
+        <div class="entry-sub" id="entrySub">点击进入定时设置</div>
+      </button>
+    </div>
+  </section>
+
+  <!-- 二级定时页面 -->
+  <section class="page timer-page" id="timerPage">
+    <div class="timer-topbar">
+      <button class="back-btn" id="backBtn">‹</button>
+      <div class="timer-title" id="timerTitle">
+        <span class="alarm-icon title-bell" id="timerAlarmIcon" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M7.5 8.5a4.5 4.5 0 1 1 9 0v2.2c0 .5.16.98.46 1.38l1.05 1.4c.41.55.49 1.28.21 1.91-.28.63-.88 1.03-1.57 1.03H7.34c-.69 0-1.29-.4-1.57-1.03-.28-.63-.2-1.36.21-1.91l1.05-1.4c.3-.4.47-.88.47-1.38V8.5"/>
+    <path d="M10.1 18.1a2 2 0 0 0 3.8 0"/>
+    <path d="M8 5.7 6.4 4.1"/>
+    <path d="m16 5.7 1.6-1.6"/>
+  </svg>
+</span>
+<span id="timerTitleText">定时</span>
+      </div>
+      <button class="timer-lang" id="timerLang">EN</button>
+    </div>
+
+    <div class="status">
+      <span class="dot"></span>
+      <span id="statusText">定时已关闭</span>
+    </div>
+
+    <div class="orbit-area">
+      <div class="orbit-stack left">
+        <div class="orbit-stack-label" id="hourLabel">时</div>
+        <button class="orbit-control" id="hourPlus">＋</button>
+        <button class="orbit-control" id="hourMinus">−</button>
+      </div>
+
+      <div class="orbit">
+        <div class="orbit-ring" id="orbitRingOuter">
+          <span class="orbit-dot"></span>
+        </div>
+        <div class="orbit-ring two" id="orbitRingInner">
+          <span class="orbit-dot"></span>
+        </div>
+
+        <div class="orbit-center">
+          <div>
+            <div class="orbit-time">
+              <span id="hourValue">00</span>:<span id="minuteValue">01</span>
+            </div>
+            <div class="orbit-sec"><span id="secondValue">00</span>s</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="orbit-stack right">
+        <div class="orbit-stack-label" id="minuteLabel">分</div>
+        <button class="orbit-control" id="minutePlus">＋</button>
+        <button class="orbit-control" id="minuteMinus">−</button>
+      </div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="action start-btn" id="startBtn">打开</button>
+      <button class="action stop-btn" id="stopBtn" disabled>关闭</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(() => {
+  const state = {
+    hour: 0,
+    minute: 1,
+    remaining: 60,
+    enabled: false,
+    finished: false,
+    lang: 'zh',
+    endAt: 0,
+    interval: null,
+    orbitRAF: null,
+    orbitLastTs: 0,
+    orbitAngleOuter: 0,
+    orbitAngleInner: 0
+  };
+
+  const words = {
+    zh: {
+      homeTitle: '设备控制',
+      entryName: '定时',
+      entrySub: '点击进入定时设置',
+      timerTitle: '定时',
+      hour: '时',
+      minute: '分',
+      open: '打开',
+      close: '关闭',
+      off: '定时已关闭',
+      on: '倒计时中',
+      done: '时间到啦',
+      started: '倒计时已开始',
+      stopped: '定时已关闭'
+    },
+    en: {
+      homeTitle: 'Device Control',
+      entryName: 'Timer',
+      entrySub: 'Tap to open timer',
+      timerTitle: 'Timer',
+      hour: 'HOUR',
+      minute: 'MIN',
+      open: 'ON',
+      close: 'OFF',
+      off: 'Timer disabled',
+      on: 'Counting down',
+      done: 'Time is up',
+      started: 'Countdown started',
+      stopped: 'Timer disabled'
+    }
+  };
+
+  const el = {
+    device: document.getElementById('device'),
+    timerEntry: document.getElementById('timerEntry'),
+    backBtn: document.getElementById('backBtn'),
+    homeLang: document.getElementById('homeLang'),
+    timerLang: document.getElementById('timerLang'),
+    homeTitle: document.getElementById('homeTitle'),
+    entryName: document.getElementById('entryName'),
+    entrySub: document.getElementById('entrySub'),
+    timerTitleText: document.getElementById('timerTitleText'),
+    statusText: document.getElementById('statusText'),
+    hourLabel: document.getElementById('hourLabel'),
+    minuteLabel: document.getElementById('minuteLabel'),
+    hourValue: document.getElementById('hourValue'),
+    minuteValue: document.getElementById('minuteValue'),
+    secondValue: document.getElementById('secondValue'),
+    hourPlus: document.getElementById('hourPlus'),
+    hourMinus: document.getElementById('hourMinus'),
+    minutePlus: document.getElementById('minutePlus'),
+    minuteMinus: document.getElementById('minuteMinus'),
+    startBtn: document.getElementById('startBtn'),
+    stopBtn: document.getElementById('stopBtn'),
+    toast: document.getElementById('toast'),
+    orbitOuter: document.getElementById('orbitRingOuter'),
+    orbitInner: document.getElementById('orbitRingInner')
+  };
+
+  let toastTimer = null;
+
+  function t() {
+    return words[state.lang];
+  }
+
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function totalSeconds() {
+    return state.hour * 3600 + state.minute * 60;
+  }
+
+  function syncRemaining() {
+    state.remaining = totalSeconds();
+  }
+
+  function splitTime(v) {
+    v = Math.max(0, Math.floor(v));
+    return {
+      h: Math.floor(v / 3600),
+      m: Math.floor((v % 3600) / 60),
+      s: v % 60
+    };
+  }
+
+  function ratio() {
+    const total = totalSeconds() || 1;
+    return Math.max(0, Math.min(1, state.remaining / total));
+  }
+
+  function showToast(message) {
+    clearTimeout(toastTimer);
+    el.toast.textContent = message;
+    el.toast.classList.add('show');
+    toastTimer = setTimeout(() => {
+      el.toast.classList.remove('show');
+    }, 1200);
+  }
+
+  function stopInterval() {
+    if (state.interval) {
+      clearInterval(state.interval);
+      state.interval = null;
+    }
+  }
+
+  function setLanguage(lang) {
+    state.lang = lang;
+    render();
+  }
+
+  function render() {
+    const d = splitTime(state.remaining);
+
+    el.homeTitle.textContent = t().homeTitle;
+    el.entryName.textContent = t().entryName;
+    el.entrySub.textContent = t().entrySub;
+    el.timerTitleText.textContent = t().timerTitle;
+    el.hourLabel.textContent = t().hour;
+    el.minuteLabel.textContent = t().minute;
+
+    el.homeLang.textContent = state.lang === 'zh' ? 'EN' : '中';
+    el.timerLang.textContent = state.lang === 'zh' ? 'EN' : '中';
+
+    el.hourValue.textContent = pad(d.h);
+    el.minuteValue.textContent = pad(d.m);
+    el.secondValue.textContent = pad(d.s);
+
+    el.startBtn.textContent = t().open;
+    el.stopBtn.textContent = t().close;
+
+    el.statusText.textContent =
+      state.finished ? t().done :
+      state.enabled ? t().on :
+      t().off;
+
+    const lockEdit = state.enabled || state.finished;
+    [
+      el.hourPlus,
+      el.hourMinus,
+      el.minutePlus,
+      el.minuteMinus
+    ].forEach(btn => {
+      btn.disabled = lockEdit;
+    });
+
+    el.startBtn.disabled = state.enabled || state.finished;
+    el.stopBtn.disabled = !(state.enabled || state.finished);
+
+    el.device.classList.toggle('enabled', state.enabled);
+    el.device.classList.toggle('finished', state.finished);
+    el.device.classList.toggle('ringing', state.finished);
+    el.device.classList.toggle('finished-flash', state.finished);
+  }
+
+  function updateCountdown() {
+    if (!state.enabled) return;
+
+    state.remaining = Math.max(
+      0,
+      Math.ceil((state.endAt - Date.now()) / 1000)
+    );
+
+    if (state.remaining <= 0) {
+      stopInterval();
+      state.enabled = false;
+      state.finished = true;
+      render();
+      showToast(t().done);
+      return;
+    }
+
+    render();
+  }
+
+  function startCountdown() {
+    const total = totalSeconds();
+    if (total <= 0) return;
+
+    state.finished = false;
+    state.remaining = total;
+    state.enabled = true;
+    state.endAt = Date.now() + total * 1000;
+
+    stopInterval();
+    state.interval = setInterval(updateCountdown, 250);
+
+    render();
+    showToast(t().started);
+  }
+
+  function stopCountdown() {
+    stopInterval();
+    state.enabled = false;
+    state.finished = false;
+    syncRemaining();
+    render();
+    showToast(t().stopped);
+  }
+
+  function changeHour(delta) {
+    if (state.enabled || state.finished) return;
+    state.hour = (state.hour + delta + 24) % 24;
+    syncRemaining();
+    render();
+  }
+
+  function changeMinute(delta) {
+    if (state.enabled || state.finished) return;
+    state.minute = (state.minute + delta + 60) % 60;
+    syncRemaining();
+    render();
+  }
+
+  function updateOrbit(ts) {
+    if (!state.orbitLastTs) {
+      state.orbitLastTs = ts;
+    }
+
+    const dt = Math.min(
+      0.05,
+      (ts - state.orbitLastTs) / 1000
+    );
+
+    state.orbitLastTs = ts;
+
+    const remainRatio = ratio();
+    const progress = 1 - remainRatio;
+
+    let outerSpeed = 9 + 2 * Math.sin(ts / 900);
+    let innerSpeed = -(13 + 3 * Math.cos(ts / 760));
+
+    if (state.enabled) {
+      outerSpeed =
+        22 +
+        progress * 150 +
+        10 * Math.sin(ts / 380);
+
+      innerSpeed = -(
+        32 +
+        progress * 210 +
+        14 * Math.cos(ts / 310)
+      );
+    } else if (state.finished) {
+      outerSpeed = 220;
+      innerSpeed = -280;
+    }
+
+    state.orbitAngleOuter =
+      (state.orbitAngleOuter + outerSpeed * dt) % 360;
+
+    state.orbitAngleInner =
+      (state.orbitAngleInner + innerSpeed * dt) % 360;
+
+    const outerScale =
+      1 + 0.006 * Math.sin(ts / 500);
+
+    const innerScale =
+      1 + 0.008 * Math.cos(ts / 420);
+
+    el.orbitOuter.style.transform =
+      `rotate(${state.orbitAngleOuter}deg) scale(${outerScale})`;
+
+    el.orbitInner.style.transform =
+      `rotate(${state.orbitAngleInner}deg) scale(${innerScale})`;
+
+    state.orbitRAF = requestAnimationFrame(updateOrbit);
+  }
+
+  el.timerEntry.addEventListener('click', () => {
+    el.device.classList.add('show-timer');
+  });
+
+  el.backBtn.addEventListener('click', () => {
+    el.device.classList.remove('show-timer');
+  });
+
+  el.homeLang.addEventListener('click', () => {
+    setLanguage(state.lang === 'zh' ? 'en' : 'zh');
+  });
+
+  el.timerLang.addEventListener('click', () => {
+    setLanguage(state.lang === 'zh' ? 'en' : 'zh');
+  });
+
+  el.hourPlus.addEventListener('click', () => changeHour(1));
+  el.hourMinus.addEventListener('click', () => changeHour(-1));
+  el.minutePlus.addEventListener('click', () => changeMinute(1));
+  el.minuteMinus.addEventListener('click', () => changeMinute(-1));
+
+  el.startBtn.addEventListener('click', startCountdown);
+  el.stopBtn.addEventListener('click', stopCountdown);
+
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && state.enabled) {
+      updateCountdown();
+    }
+  });
+
+  render();
+  state.orbitRAF = requestAnimationFrame(updateOrbit);
+})();
+</script>
+</body>
+</html>
