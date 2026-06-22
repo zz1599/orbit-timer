@@ -1,608 +1,553 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orbit Timer Final</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>240×240 空调制冷动态效果（刻度联动修正版）</title>
 <style>
-*{box-sizing:border-box}
-:root{
-  --bg1:#091426;
-  --bg2:#030712;
-  --screen1:#0d192b;
-  --screen2:#07111f;
-  --line:rgba(148,163,184,.16);
-  --text:#f8fafc;
-  --sub:#94a3b8;
-  --blue:#38bdf8;
-  --blue2:#2563eb;
-  --violet:#a78bfa;
-  --green:#22c55e;
-  --orange:#f59e0b;
-}
-html,body{
-  margin:0;
-  min-height:100%;
-  font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
-}
-body{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:18px;
-  background:
-    radial-gradient(circle at 50% 8%,rgba(56,189,248,.14),transparent 30%),
-    linear-gradient(180deg,var(--bg1),var(--bg2));
-  color:var(--text);
-}
-.screen{
-  width:240px;
-  height:240px;
-  position:relative;
-  overflow:hidden;
-  border-radius:26px;
-  background:
-    linear-gradient(160deg,rgba(255,255,255,.05),transparent 35%),
-    linear-gradient(180deg,var(--screen1),var(--screen2));
-  border:1px solid rgba(255,255,255,.08);
-  box-shadow:
-    0 24px 60px rgba(2,8,23,.55),
-    inset 0 1px 0 rgba(255,255,255,.06);
-  user-select:none;
-}
-.screen::before{
-  content:"";
-  position:absolute;
-  right:-50px;
-  top:-50px;
-  width:130px;
-  height:130px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(37,99,235,.24),transparent 68%);
-  pointer-events:none;
-}
-.screen::after{
-  content:"";
-  position:absolute;
-  left:-48px;
-  bottom:-52px;
-  width:126px;
-  height:126px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(56,189,248,.10),transparent 70%);
-  pointer-events:none;
-}
-.topbar{
-  position:relative;
-  z-index:2;
-  height:40px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:9px 10px 0;
-}
-.brand{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  font-size:15px;
-  font-weight:850;
-}
-.bell{
-  width:25px;
-  height:25px;
-  border-radius:9px;
-  display:grid;
-  place-items:center;
-  background:rgba(56,189,248,.13);
-  border:1px solid rgba(56,189,248,.16);
-  color:#7dd3fc;
-  transform-origin:50% 12%;
-}
-.bell svg{width:15px;height:15px}
-.ringing .bell{
-  animation:ring .65s ease-in-out infinite;
-}
-@keyframes ring{
-  0%,100%{transform:rotate(0)}
-  15%{transform:rotate(18deg)}
-  30%{transform:rotate(-16deg)}
-  45%{transform:rotate(12deg)}
-  60%{transform:rotate(-10deg)}
-  75%{transform:rotate(7deg)}
-  90%{transform:rotate(-4deg)}
-}
-.lang{
-  min-width:40px;
-  height:25px;
-  border-radius:9px;
-  border:1px solid rgba(56,189,248,.18);
-  background:rgba(15,23,42,.45);
-  color:#7dd3fc;
-  font-size:11px;
-  font-weight:800;
-  cursor:pointer;
-}
-.status{
-  position:relative;
-  z-index:2;
-  height:22px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  font-size:10px;
-  color:var(--sub);
-}
-.dot{
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:#64748b;
-}
-.screen.enabled .dot{
-  background:var(--green);
-  box-shadow:0 0 10px rgba(34,197,94,.55);
-}
-.screen.finished .dot{
-  background:var(--orange);
-  box-shadow:0 0 10px rgba(245,158,11,.55);
-}
-.orbit-area{
-  position:relative;
-  z-index:2;
-  height:143px;
-  display:grid;
-  place-items:center;
-}
-.orbit-stack{
-  position:absolute;
-  top:50%;
-  transform:translateY(-50%);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap:4px;
-}
-.orbit-stack.left{left:7px}
-.orbit-stack.right{right:7px}
-.orbit-stack-label{
-  font-size:9px;
-  color:var(--sub);
-  letter-spacing:.05em;
-}
-.orbit-control{
-  width:32px;
-  height:26px;
-  border-radius:9px;
-  border:1px solid var(--line);
-  background:#17263d;
-  color:white;
-  font-size:15px;
-  cursor:pointer;
-}
-.orbit-control:disabled{
-  opacity:.28;
-  cursor:not-allowed;
-}
-.orbit{
-  width:118px;
-  height:118px;
-  position:relative;
-  border-radius:50%;
-  border:1px solid rgba(56,189,248,.16);
-}
-.orbit-ring{
-  position:absolute;
-  inset:9px;
-  border-radius:50%;
-  border:1px dashed rgba(125,211,252,.28);
-  will-change:transform;
-}
-.orbit-ring.two{
-  inset:21px;
-}
-.orbit-dot{
-  position:absolute;
-  top:-4px;
-  left:50%;
-  width:9px;
-  height:9px;
-  margin-left:-4.5px;
-  border-radius:50%;
-  background:var(--blue);
-  box-shadow:0 0 14px rgba(56,189,248,.8);
-}
-.orbit-ring.two .orbit-dot{
-  background:var(--violet);
-  box-shadow:0 0 14px rgba(167,139,250,.8);
-}
-.orbit-center{
-  position:absolute;
-  inset:31px;
-  border-radius:50%;
-  background:radial-gradient(circle,rgba(56,189,248,.10),rgba(8,17,31,.95));
-  border:1px solid rgba(255,255,255,.05);
-  display:grid;
-  place-items:center;
-  text-align:center;
-}
-.orbit-time{
-  font-size:22px;
-  font-weight:900;
-  letter-spacing:-.05em;
-}
-.orbit-sec{
-  font-size:10px;
-  color:#7dd3fc;
-  margin-top:3px;
-}
-.orbit-percent{
-  font-size:9px;
-  color:var(--sub);
-  margin-top:3px;
-}
-.footer-actions{
-  position:relative;
-  z-index:2;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px;
-  padding:2px 12px 8px;
-}
-.act{
-  height:32px;
-  border-radius:10px;
-  font-size:12px;
-  font-weight:800;
-  cursor:pointer;
-}
-.start-btn{
-  border:0;
-  color:#fff;
-  background:linear-gradient(135deg,#0ea5e9,#2563eb);
-}
-.stop-btn{
-  border:1px solid var(--line);
-  color:#dbeafe;
-  background:#17263d;
-}
-.act:disabled{
-  opacity:.35;
-  cursor:not-allowed;
-}
-.toast{
-  position:absolute;
-  left:50%;
-  bottom:10px;
-  transform:translate(-50%,10px);
-  background:rgba(2,6,23,.94);
-  border:1px solid var(--line);
-  color:#e2e8f0;
-  padding:6px 9px;
-  border-radius:9px;
-  font-size:10px;
-  opacity:0;
-  pointer-events:none;
-  transition:.18s;
-  white-space:nowrap;
-  z-index:20;
-}
-.toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
-}
-.finished-flash{
-  animation:finishFlash 1s ease-in-out infinite;
-}
-@keyframes finishFlash{
-  0%,100%{box-shadow:0 24px 60px rgba(2,8,23,.55),inset 0 1px 0 rgba(255,255,255,.06)}
-  50%{box-shadow:0 0 0 4px rgba(245,158,11,.16),0 0 34px rgba(245,158,11,.26)}
-}
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    background: #111;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    font-family: Arial, "Microsoft YaHei", sans-serif;
+  }
+
+  .screen {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    border-radius: 50%;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 38%, rgba(35,90,140,.18), transparent 40%),
+      radial-gradient(circle at 50% 52%, #071019 0%, #02070d 62%, #000 100%);
+    border: 3px solid #585f67;
+    box-shadow:
+      inset 0 0 0 2px rgba(255,255,255,.03),
+      inset 0 0 24px rgba(0,170,255,.10),
+      0 0 18px rgba(0,0,0,.8);
+    user-select: none;
+    touch-action: none;
+  }
+
+  .ticks {
+    position: absolute;
+    inset: 0;
+    z-index: 7;
+  }
+
+  .tick {
+    position: absolute;
+    left: 117px;
+    top: 19px;
+    width: 7px;
+    height: 15px;
+    border-radius: 7px;
+    transform-origin: 3.5px 101px;
+    cursor: pointer;
+    transition: top .12s, height .12s, opacity .12s, filter .12s, background .12s, box-shadow .12s;
+    background: rgba(255,255,255,.10);
+    opacity: .38;
+    box-shadow: none;
+  }
+
+  .tick.selected {
+    top: 19px;
+    height: 15px;
+    opacity: 1 !important;
+    filter: brightness(1.30);
+    outline: 1px solid rgba(255,255,255,.92);
+    outline-offset: 1px;
+  }
+
+  .snow-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .flake, .dot {
+    position: absolute;
+    top: -20px;
+    color: rgba(86,192,255,.92);
+    text-shadow: 0 0 6px rgba(0,170,255,.85);
+    animation-iteration-count: infinite;
+    pointer-events: none;
+  }
+
+  .flake {
+    animation-name: fall, sway, twinkle;
+    animation-timing-function: linear, ease-in-out, ease-in-out;
+  }
+
+  .dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: rgba(86,192,255,.92);
+    box-shadow: 0 0 8px rgba(0,170,255,.85);
+    animation-name: drift, twinkle;
+    animation-timing-function: linear, ease-in-out;
+  }
+
+  .snow-main {
+    position: absolute;
+    top: 52px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #33dfff;
+    font-size: 37px;
+    line-height: 1;
+    text-shadow: 0 0 11px #00bfff;
+    z-index: 4;
+  }
+
+  .temp-group {
+    position: absolute;
+    top: 92px;
+    left: calc(50% - 13px);
+    transform: translateX(-50%);
+    width: 142px;
+    height: 72px;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .temp {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #fff;
+    font-size: 71px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -4px;
+    text-shadow: 0 0 10px rgba(95,195,255,.78);
+    white-space: nowrap;
+  }
+
+  .unit {
+    position: absolute;
+    top: 14px;
+    left: calc(50% + 43px);
+    font-size: 23px;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(95,195,255,.78);
+    white-space: nowrap;
+  }
+
+  .fan-area {
+    position: absolute;
+    top: 141px;
+    left: 136px;
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    z-index: 6;
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 10px;
+    overflow: visible;
+  }
+
+  .fan-area:active {
+    background: rgba(70,190,255,.10);
+  }
+  .fan {
+    width: 18px;
+    height: 18px;
+    display: grid;
+    place-items: center;
+    animation: spin 1.25s linear infinite;
+    filter: drop-shadow(0 0 5px rgba(120,210,255,.78));
+    flex: 0 0 auto;
+  }
+
+  .fan-svg {
+    width: 18px;
+    height: 18px;
+    overflow: visible;
+  }
+
+  .fan-blade {
+    fill: rgba(255,255,255,.96);
+  }
+
+  .fan-core {
+    fill: rgba(255,255,255,1);
+  }
+
+
+  .fan-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 22px;
+    min-width: 26px;
+    overflow: visible;
+  }
+
+  .fan-bars b {
+    display: block;
+    width: 2px;
+    border-radius: 2px;
+    background: rgba(170, 210, 235, .46);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.06);
+    transition: background .15s, box-shadow .15s, opacity .15s;
+    opacity: .98;
+    flex: 0 0 auto;
+  }
+
+  .fan-bars b:nth-child(1) { height: 8px; }
+  .fan-bars b:nth-child(2) { height: 10px; }
+  .fan-bars b:nth-child(3) { height: 12px; }
+  .fan-bars b:nth-child(4) { height: 14px; }
+  .fan-bars b:nth-child(5) { height: 16px; }
+  .fan-bars b:nth-child(6) { height: 18px; }
+  .fan-bars b:nth-child(7) { height: 20px; }
+
+  .fan-bars b.on {
+    background: rgba(255,255,255,.99);
+    box-shadow:
+      0 0 5px rgba(120,210,255,.95),
+      inset 0 0 0 1px rgba(255,255,255,.12);
+    opacity: 1;
+  }
+
+  .room {
+    position: absolute;
+    left: 50%;
+    bottom: 31px;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #fff;
+    font-size: 20px;
+    white-space: nowrap;
+    text-shadow: 0 0 8px rgba(95,195,255,.75);
+    z-index: 5;
+  }
+
+  .home-icon {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 auto;
+    filter: drop-shadow(0 0 5px rgba(120,210,255,.75));
+  }
+
+  .hint {
+    position: absolute;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    color: rgba(165,215,240,.58);
+    font-size: 8px;
+    z-index: 5;
+    white-space: nowrap;
+  }
+
+  .toast {
+    position: absolute;
+    left: 50%;
+    bottom: 61px;
+    transform: translateX(-50%);
+    min-width: 68px;
+    padding: 4px 9px;
+    border-radius: 12px;
+    background: rgba(0,20,35,.64);
+    color: #e8f8ff;
+    font-size: 11px;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .18s ease;
+    z-index: 12;
+  }
+
+  .toast.show { opacity: 1; }
+
+  .glass {
+    position: absolute;
+    inset: 4px;
+    border-radius: 50%;
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.07), transparent 26%),
+      radial-gradient(circle at 64% 14%, rgba(255,255,255,.045), transparent 18%);
+    pointer-events: none;
+    z-index: 20;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  @keyframes fall {
+    from { transform: translateY(-22px) rotate(0deg); }
+    to   { transform: translateY(286px) rotate(360deg); }
+  }
+
+  @keyframes drift {
+    from { transform: translateY(-15px); }
+    to   { transform: translateY(275px); }
+  }
+
+  @keyframes sway {
+    0%,100% { margin-left: -5px; }
+    50%     { margin-left: 7px; }
+  }
+
+  @keyframes twinkle {
+    0%,100% { opacity: .25; }
+    25%,75% { opacity: .9; }
+  }
 </style>
 </head>
 <body>
-  <div class="screen" id="screen">
-    <div class="topbar">
-      <div class="brand">
-        <div class="bell" id="bell"></div>
-        <span id="title">定时</span>
-      </div>
-      <button class="lang" id="langBtn">EN</button>
-    </div>
+<div class="screen" id="screen" aria-label="空调制冷动态效果图">
+  <div class="ticks" id="ticks"></div>
+  <div class="snow-layer" id="snowLayer"></div>
 
-    <div class="status">
-      <span class="dot"></span>
-      <span id="statusText">定时已关闭</span>
-    </div>
+  <div class="snow-main">❄</div>
 
-    <div class="orbit-area">
-      <div class="orbit-stack left">
-        <div class="orbit-stack-label" id="hourLabel">时</div>
-        <button class="orbit-control" id="hourPlus">＋</button>
-        <button class="orbit-control" id="hourMinus">−</button>
-      </div>
-
-      <div class="orbit">
-        <div class="orbit-ring" id="orbitRingOuter"><span class="orbit-dot"></span></div>
-        <div class="orbit-ring two" id="orbitRingInner"><span class="orbit-dot"></span></div>
-        <div class="orbit-center">
-          <div>
-            <div class="orbit-time"><span id="hourValue">00</span>:<span id="minuteValue">01</span></div>
-            <div class="orbit-sec"><span id="secondValue">00</span>s</div>
-            <div class="orbit-percent"><span id="percentValue">100</span>%</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="orbit-stack right">
-        <div class="orbit-stack-label" id="minuteLabel">分</div>
-        <button class="orbit-control" id="minutePlus">＋</button>
-        <button class="orbit-control" id="minuteMinus">−</button>
-      </div>
-    </div>
-
-    <div class="footer-actions">
-      <button class="act start-btn" id="startBtn">打开</button>
-      <button class="act stop-btn" id="stopBtn" disabled>关闭</button>
-    </div>
-
-    <div class="toast" id="toast"></div>
+  <div class="temp-group">
+    <div class="temp" id="tempValue">29</div>
+    <div class="unit">°C</div>
   </div>
 
+  <div class="fan-area" id="fanArea" title="点击切换风速">
+    <div class="fan" id="fan" aria-hidden="true">
+        <svg class="fan-svg" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="1.9" class="fan-core"/>
+          <path d="M12 3.1c2.7 0 4.3 1.2 4.3 2.8 0 1.9-1.8 3.6-4.9 4.4-.6.2-1-.1-1.1-.7-.4-2.5-.2-4.5.6-5.6.3-.5.7-.9 1.1-.9z" class="fan-blade"/>
+          <path d="M20.9 12c0 2.7-1.2 4.3-2.8 4.3-1.9 0-3.6-1.8-4.4-4.9-.2-.6.1-1 .7-1.1 2.5-.4 4.5-.2 5.6.6.5.3.9.7.9 1.1z" class="fan-blade"/>
+          <path d="M12 20.9c-2.7 0-4.3-1.2-4.3-2.8 0-1.9 1.8-3.6 4.9-4.4.6-.2 1 .1 1.1.7.4 2.5.2 4.5-.6 5.6-.3.5-.7.9-1.1.9z" class="fan-blade"/>
+          <path d="M3.1 12c0-2.7 1.2-4.3 2.8-4.3 1.9 0 3.6 1.8 4.4 4.9.2.6-.1 1-.7 1.1-2.5.4-4.5.2-5.6-.6-.5-.3-.9-.7-.9-1.1z" class="fan-blade"/>
+        </svg>
+      </div>
+    <div class="fan-bars" id="fanBars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
+  </div>
+
+  <div class="room">
+    <svg class="home-icon" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M5 15.5L16 6l11 9.5" fill="none" stroke="white" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M8.5 14.5V26h15V14.5" fill="none" stroke="white" stroke-width="3"
+            stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M13.5 26v-8h5v8" fill="none" stroke="white" stroke-width="3"
+            stroke-linejoin="round"/>
+    </svg>
+    <div>28.6°C</div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <div class="glass"></div>
+</div>
+
 <script>
-(() => {
-  const bellSvg = `
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M7 5.8a5 5 0 0 1 10 0v1.3c0 .5.17.98.47 1.38l1.06 1.41c.43.57.67 1.27.67 1.98V15a2 2 0 0 1-2 2H6.8a2 2 0 0 1-2-2v-2.13c0-.71.24-1.41.67-1.98l1.06-1.41c.3-.4.47-.88.47-1.38V5.8"/>
-      <path d="M10 18a2 2 0 0 0 4 0"/>
-    </svg>`;
-  document.getElementById('bell').innerHTML = bellSvg;
+  const MIN_TEMP = 16;
+  const MAX_TEMP = 32;
+  const STEP_COUNT = MAX_TEMP - MIN_TEMP + 1; // 17格
+  const ARC_HALF_ANGLE = 122;
+  const START_ANGLE = -ARC_HALF_ANGLE;
+  const END_ANGLE = ARC_HALF_ANGLE;
 
-  const state = {
-    hour: 0,
-    minute: 1,
-    remaining: 60,
-    enabled: false,
-    finished: false,
-    lang: 'zh',
-    endAt: 0,
-    interval: null,
-    orbitRAF: null,
-    orbitLastTs: 0,
-    orbitAngleOuter: 0,
-    orbitAngleInner: 0
-  };
+  const ticks = document.getElementById("ticks");
+  const screen = document.getElementById("screen");
+  const tempValue = document.getElementById("tempValue");
+  const toast = document.getElementById("toast");
 
-  const text = {
-    zh: {
-      title: '定时',
-      hour: '时',
-      minute: '分',
-      open: '打开',
-      close: '关闭',
-      off: '定时已关闭',
-      on: '倒计时中',
-      done: '时间到啦',
-      started: '倒计时已开始',
-      stopped: '倒计时已关闭'
-    },
-    en: {
-      title: 'Timer',
-      hour: 'HOUR',
-      minute: 'MIN',
-      open: 'ON',
-      close: 'OFF',
-      off: 'Timer disabled',
-      on: 'Counting down',
-      done: 'Time is up',
-      started: 'Countdown started',
-      stopped: 'Timer disabled'
-    }
-  };
-
-  const el = {
-    screen: document.getElementById('screen'),
-    title: document.getElementById('title'),
-    langBtn: document.getElementById('langBtn'),
-    statusText: document.getElementById('statusText'),
-    hourLabel: document.getElementById('hourLabel'),
-    minuteLabel: document.getElementById('minuteLabel'),
-    hourValue: document.getElementById('hourValue'),
-    minuteValue: document.getElementById('minuteValue'),
-    secondValue: document.getElementById('secondValue'),
-    percentValue: document.getElementById('percentValue'),
-    hourPlus: document.getElementById('hourPlus'),
-    hourMinus: document.getElementById('hourMinus'),
-    minutePlus: document.getElementById('minutePlus'),
-    minuteMinus: document.getElementById('minuteMinus'),
-    startBtn: document.getElementById('startBtn'),
-    stopBtn: document.getElementById('stopBtn'),
-    toast: document.getElementById('toast'),
-    orbitOuter: document.getElementById('orbitRingOuter'),
-    orbitInner: document.getElementById('orbitRingInner')
-  };
-
+  let currentTemp = 29;
+  let dragging = false;
   let toastTimer = null;
+  const tickEls = [];
 
-  function t() {
-    return text[state.lang];
+  function tickColor(index) {
+    const t = index / (STEP_COUNT - 1);
+    const hue = 188 - t * 128; // 蓝青 -> 黄
+    return `hsl(${hue} 100% 58%)`;
   }
 
-  function pad(n) {
-    return String(n).padStart(2, '0');
-  }
+  for (let i = 0; i < STEP_COUNT; i++) {
+    const el = document.createElement("div");
+    el.className = "tick";
+    const angle = START_ANGLE + (END_ANGLE - START_ANGLE) * i / (STEP_COUNT - 1);
+    el.style.transform = `rotate(${angle}deg)`;
+    el.dataset.temp = String(MIN_TEMP + i);
+    el.dataset.activeColor = tickColor(i);
+    el.title = `${MIN_TEMP + i}°C`;
 
-  function totalSeconds() {
-    return state.hour * 3600 + state.minute * 60;
-  }
-
-  function syncRemaining() {
-    state.remaining = totalSeconds();
-  }
-
-  function splitTime(v) {
-    v = Math.max(0, Math.floor(v));
-    return {
-      h: Math.floor(v / 3600),
-      m: Math.floor((v % 3600) / 60),
-      s: v % 60
-    };
-  }
-
-  function ratio() {
-    const total = totalSeconds() || 1;
-    return Math.max(0, Math.min(1, state.remaining / total));
-  }
-
-  function showToast(msg) {
-    clearTimeout(toastTimer);
-    el.toast.textContent = msg;
-    el.toast.classList.add('show');
-    toastTimer = setTimeout(() => el.toast.classList.remove('show'), 1200);
-  }
-
-  function stopInterval() {
-    if (state.interval) {
-      clearInterval(state.interval);
-      state.interval = null;
-    }
-  }
-
-  function render() {
-    const d = splitTime(state.remaining);
-    el.hourValue.textContent = pad(d.h);
-    el.minuteValue.textContent = pad(d.m);
-    el.secondValue.textContent = pad(d.s);
-    el.percentValue.textContent = String(Math.round(ratio() * 100));
-
-    el.title.textContent = t().title;
-    el.hourLabel.textContent = t().hour;
-    el.minuteLabel.textContent = t().minute;
-    el.langBtn.textContent = state.lang === 'zh' ? 'EN' : '中';
-    el.startBtn.textContent = t().open;
-    el.stopBtn.textContent = t().close;
-    el.statusText.textContent = state.finished ? t().done : (state.enabled ? t().on : t().off);
-
-    const lockEdit = state.enabled || state.finished;
-    [el.hourPlus, el.hourMinus, el.minutePlus, el.minuteMinus].forEach(btn => {
-      btn.disabled = lockEdit;
+    el.addEventListener("click", (event) => {
+      event.stopPropagation();
+      setTemperature(Number(el.dataset.temp), true);
     });
 
-    el.startBtn.disabled = state.enabled || state.finished;
-    el.stopBtn.disabled = !(state.enabled || state.finished);
-
-    el.screen.classList.toggle('enabled', state.enabled);
-    el.screen.classList.toggle('finished', state.finished);
+    ticks.appendChild(el);
+    tickEls.push(el);
   }
 
-  function updateCountdown() {
-    if (!state.enabled) return;
-    state.remaining = Math.max(0, Math.ceil((state.endAt - Date.now()) / 1000));
-
-    if (state.remaining <= 0) {
-      stopInterval();
-      state.enabled = false;
-      state.finished = true;
-      el.screen.classList.add('ringing', 'finished-flash');
-      render();
-      showToast(t().done);
-      return;
-    }
-
-    render();
+  function showToast(text) {
+    toast.textContent = text;
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove("show"), 850);
   }
 
-  function startCountdown() {
-    const total = totalSeconds();
-    if (total <= 0) return;
+  // 关键逻辑：
+  // 16℃ -> 亮1格
+  // 17℃ -> 亮2格
+  // ...
+  // 32℃ -> 亮17格
+  function setTemperature(value, show = false) {
+    currentTemp = Math.max(MIN_TEMP, Math.min(MAX_TEMP, Math.round(value)));
+    tempValue.textContent = String(currentTemp);
 
-    state.finished = false;
-    el.screen.classList.remove('ringing', 'finished-flash');
-    state.remaining = total;
-    state.enabled = true;
-    state.endAt = Date.now() + total * 1000;
-    stopInterval();
-    state.interval = setInterval(updateCountdown, 250);
-    render();
-    showToast(t().started);
+    const litCount = currentTemp - MIN_TEMP + 1;
+
+    tickEls.forEach((el, index) => {
+      const isLit = index < litCount;
+      const isSelected = index === litCount - 1;
+      const activeColor = el.dataset.activeColor;
+
+      el.classList.toggle("selected", isSelected);
+
+      if (isLit) {
+        el.style.background = activeColor;
+        el.style.boxShadow = `0 0 ${isSelected ? 10 : 7}px ${activeColor}`;
+        el.style.opacity = isSelected ? "1" : ".92";
+      } else {
+        el.style.background = "rgba(255,255,255,.10)";
+        el.style.boxShadow = "none";
+        el.style.opacity = ".38";
+      }
+    });
+
+    // 调温时不显示“设定 XX°C”提示，中央数字直接更新
   }
 
-  function stopCountdown() {
-    stopInterval();
-    state.enabled = false;
-    state.finished = false;
-    el.screen.classList.remove('ringing', 'finished-flash');
-    syncRemaining();
-    render();
-    showToast(t().stopped);
+  function temperatureFromPointer(event) {
+    const rect = screen.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = event.clientX - cx;
+    const dy = event.clientY - cy;
+
+    let angle = Math.atan2(dx, -dy) * 180 / Math.PI;
+    angle = Math.max(START_ANGLE, Math.min(END_ANGLE, angle));
+
+    const ratio = (angle - START_ANGLE) / (END_ANGLE - START_ANGLE);
+    return MIN_TEMP + Math.round(ratio * (STEP_COUNT - 1));
   }
 
-  function changeHour(delta) {
-    if (state.enabled || state.finished) return;
-    state.hour = (state.hour + delta + 24) % 24;
-    syncRemaining();
-    render();
+  function pointerInArcArea(event) {
+    const rect = screen.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = event.clientX - cx;
+    const dy = event.clientY - cy;
+    const radius = Math.hypot(dx, dy);
+    return radius >= 78 && radius <= 116;
   }
 
-  function changeMinute(delta) {
-    if (state.enabled || state.finished) return;
-    state.minute = (state.minute + delta + 60) % 60;
-    syncRemaining();
-    render();
-  }
-
-  function updateOrbit(ts) {
-    if (!state.orbitLastTs) state.orbitLastTs = ts;
-    const dt = Math.min(0.05, (ts - state.orbitLastTs) / 1000);
-    state.orbitLastTs = ts;
-
-    const remainRatio = ratio();
-    const progress = 1 - remainRatio;
-
-    let outerSpeed = 9 + 2 * Math.sin(ts / 900);
-    let innerSpeed = -(13 + 3 * Math.cos(ts / 760));
-
-    if (state.enabled) {
-      outerSpeed = 22 + progress * 150 + 10 * Math.sin(ts / 380);
-      innerSpeed = -(32 + progress * 210 + 14 * Math.cos(ts / 310));
-    } else if (state.finished) {
-      outerSpeed = 220;
-      innerSpeed = -280;
-    }
-
-    state.orbitAngleOuter = (state.orbitAngleOuter + outerSpeed * dt) % 360;
-    state.orbitAngleInner = (state.orbitAngleInner + innerSpeed * dt) % 360;
-
-    const outerScale = 1 + 0.006 * Math.sin(ts / 500);
-    const innerScale = 1 + 0.008 * Math.cos(ts / 420);
-
-    el.orbitOuter.style.transform = `rotate(${state.orbitAngleOuter}deg) scale(${outerScale})`;
-    el.orbitInner.style.transform = `rotate(${state.orbitAngleInner}deg) scale(${innerScale})`;
-
-    state.orbitRAF = requestAnimationFrame(updateOrbit);
-  }
-
-  el.hourPlus.addEventListener('click', () => changeHour(1));
-  el.hourMinus.addEventListener('click', () => changeHour(-1));
-  el.minutePlus.addEventListener('click', () => changeMinute(1));
-  el.minuteMinus.addEventListener('click', () => changeMinute(-1));
-  el.startBtn.addEventListener('click', startCountdown);
-  el.stopBtn.addEventListener('click', stopCountdown);
-  el.langBtn.addEventListener('click', () => {
-    state.lang = state.lang === 'zh' ? 'en' : 'zh';
-    render();
+  screen.addEventListener("pointerdown", (event) => {
+    if (!pointerInArcArea(event)) return;
+    dragging = true;
+    screen.setPointerCapture(event.pointerId);
+    setTemperature(temperatureFromPointer(event), true);
   });
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && state.enabled) {
-      updateCountdown();
+  screen.addEventListener("pointermove", (event) => {
+    if (!dragging) return;
+    setTemperature(temperatureFromPointer(event), false);
+  });
+
+  screen.addEventListener("pointerup", (event) => {
+    if (!dragging) return;
+    dragging = false;
+    if (screen.hasPointerCapture(event.pointerId)) {
+      screen.releasePointerCapture(event.pointerId);
     }
   });
 
-  render();
-  state.orbitRAF = requestAnimationFrame(updateOrbit);
-})();
+  screen.addEventListener("pointercancel", () => {
+    dragging = false;
+  });
+
+  // 动态雪花
+  const layer = document.getElementById("snowLayer");
+  const snowChars = ["❄","❅","❆"];
+
+  for (let i = 0; i < 12; i++) {
+    const f = document.createElement("span");
+    f.className = "flake";
+    f.textContent = snowChars[i % snowChars.length];
+
+    const left = 16 + Math.random() * 205;
+    const size = 8 + Math.random() * 8;
+    const fall = 5 + Math.random() * 4.5;
+    const sway = 2.5 + Math.random() * 2.2;
+    const delay = -Math.random() * fall;
+
+    f.style.left = `${left}px`;
+    f.style.fontSize = `${size}px`;
+    f.style.animationDuration = `${fall}s, ${sway}s, ${fall * .8}s`;
+    f.style.animationDelay = `${delay}s, ${delay}s, ${delay}s`;
+    layer.appendChild(f);
+  }
+
+  for (let i = 0; i < 18; i++) {
+    const d = document.createElement("span");
+    d.className = "dot";
+
+    const left = 18 + Math.random() * 202;
+    const fall = 4.8 + Math.random() * 4.5;
+    const delay = -Math.random() * fall;
+    const twinkle = 1.6 + Math.random() * 1.8;
+
+    d.style.left = `${left}px`;
+    d.style.animationDuration = `${fall}s, ${twinkle}s`;
+    d.style.animationDelay = `${delay}s, ${delay}s`;
+    layer.appendChild(d);
+  }
+
+  // 风速1~7档
+  const fan = document.getElementById("fan");
+  const fanArea = document.getElementById("fanArea");
+  const fanBars = [...document.querySelectorAll("#fanBars b")];
+  let speedLevel = 4;
+
+  const fanDurations = {
+    1: 2.80,
+    2: 2.20,
+    3: 1.70,
+    4: 1.25,
+    5: 0.95,
+    6: 0.70,
+    7: 0.48
+  };
+
+  function updateFanSpeed(show = false) {
+    fan.style.animationDuration = `${fanDurations[speedLevel]}s`;
+    fanBars.forEach((bar, index) => {
+      bar.classList.toggle("on", index < speedLevel);
+    });
+    if (show) showToast(`风速 ${speedLevel} 档`);
+  }
+
+  fanArea.addEventListener("click", (event) => {
+    event.stopPropagation();
+    speedLevel = speedLevel >= 7 ? 1 : speedLevel + 1;
+    updateFanSpeed(true);
+  });
+
+  updateFanSpeed(false);
+  setTemperature(currentTemp, false);
 </script>
 </body>
 </html>
