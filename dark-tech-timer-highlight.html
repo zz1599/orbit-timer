@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>深色科技定时器</title>
+<style>
+:root{
+  --bg1:#07111f;
+  --bg2:#030712;
+  --screenA:#0c1728;
+  --screenB:#08111f;
+  --panel:#0f1b2f;
+  --panel2:#152238;
+  --line:rgba(148,163,184,.16);
+  --text:#f8fafc;
+  --sub:#94a3b8;
+  --accent:#38bdf8;
+  --accent2:#2563eb;
+  --success:#22c55e;
+  --warn:#f59e0b;
+  --openText:#ffffff;
+  --closeText:#dbeafe;
+  --openGrad1:#0ea5e9;
+  --openGrad2:#2563eb;
+  --ringBg:rgba(14,165,233,.10);
+  --ringBorder:rgba(56,189,248,.13);
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  font-family:Inter,"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  color:var(--text);
+  background:
+    radial-gradient(circle at 50% 8%,rgba(56,189,248,.12),transparent 28%),
+    linear-gradient(180deg,var(--bg1),var(--bg2));
+}
+.screen{
+  width:240px;
+  height:240px;
+  position:relative;
+  overflow:hidden;
+  border-radius:26px;
+  background:
+    linear-gradient(160deg,rgba(255,255,255,.06),transparent 36%),
+    linear-gradient(180deg,var(--screenA),var(--screenB));
+  border:1px solid rgba(255,255,255,.08);
+  box-shadow:
+    0 22px 55px rgba(2,8,23,.56),
+    inset 0 1px 0 rgba(255,255,255,.06);
+}
+.screen::before{
+  content:"";
+  position:absolute;
+  right:-48px;
+  top:-44px;
+  width:126px;
+  height:126px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,.22),transparent 68%);
+  pointer-events:none;
+}
+.screen::after{
+  content:"";
+  position:absolute;
+  left:-58px;
+  bottom:-58px;
+  width:128px;
+  height:128px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(56,189,248,.14),transparent 70%);
+  pointer-events:none;
+}
+.topbar{
+  position:relative;
+  z-index:2;
+  height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:11px 12px 0;
+}
+.title-wrap{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.icon-box{
+  width:28px;
+  height:28px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  position:relative;
+  color:var(--accent);
+  background:linear-gradient(145deg,rgba(56,189,248,.16),rgba(37,99,235,.18));
+  border:1px solid rgba(56,189,248,.20);
+  transform-origin:50% 12%;
+}
+.icon-box svg{width:17px;height:17px;display:block}
+.ring-line{
+  position:absolute;
+  width:10px;
+  height:10px;
+  border:2px solid transparent;
+  border-top-color:var(--warn);
+  border-radius:50%;
+  opacity:0;
+}
+.ring-left{left:-4px;top:6px;transform:rotate(-40deg)}
+.ring-right{right:-4px;top:6px;transform:rotate(40deg)}
+.title{
+  font-size:16px;
+  font-weight:800;
+  letter-spacing:.02em;
+}
+.lang{
+  min-width:42px;
+  height:26px;
+  padding:0 9px;
+  border-radius:10px;
+  border:1px solid rgba(56,189,248,.20);
+  background:rgba(15,23,42,.10);
+  color:var(--accent);
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+.status-row{
+  position:relative;
+  z-index:2;
+  height:26px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.status-pill{
+  min-width:98px;
+  height:22px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border-radius:999px;
+  background:rgba(0,0,0,.08);
+  border:1px solid var(--line);
+  color:var(--sub);
+  font-size:10px;
+}
+.status-dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#64748b;
+  box-shadow:0 0 0 3px rgba(100,116,139,.10);
+}
+.screen.enabled .status-pill{
+  color:#a7f3d0;
+  background:rgba(34,197,94,.10);
+  border-color:rgba(34,197,94,.18);
+}
+.screen.enabled .status-dot{
+  background:var(--success);
+  box-shadow:0 0 0 3px rgba(34,197,94,.12),0 0 12px rgba(34,197,94,.42);
+}
+.screen.finished .status-pill{
+  color:#fde68a;
+  background:rgba(245,158,11,.11);
+  border-color:rgba(245,158,11,.18);
+}
+.screen.finished .status-dot{
+  background:var(--warn);
+  box-shadow:0 0 0 3px rgba(245,158,11,.13),0 0 12px rgba(245,158,11,.42);
+}
+.time-panel{
+  position:relative;
+  z-index:2;
+  margin:5px 12px 0;
+  height:105px;
+  border-radius:18px;
+  border:1px solid var(--line);
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.01)),
+    var(--panel);
+  display:grid;
+  grid-template-columns:1fr 22px 1fr;
+  align-items:center;
+  padding:10px 8px;
+}
+.time-group{
+  height:83px;
+  display:grid;
+  grid-template-rows:22px 1fr;
+  justify-items:center;
+  align-items:center;
+}
+.unit{
+  font-size:10px;
+  color:var(--sub);
+  letter-spacing:.08em;
+}
+.value{
+  min-width:54px;
+  text-align:center;
+  font-size:36px;
+  line-height:1;
+  font-weight:800;
+  letter-spacing:-.04em;
+}
+.middle{
+  height:82px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.colon{
+  font-size:29px;
+  color:rgba(148,163,184,.78);
+  font-weight:800;
+  line-height:1;
+}
+.seconds{
+  min-width:25px;
+  height:18px;
+  padding:0 4px;
+  border-radius:7px;
+  display:grid;
+  place-items:center;
+  font-size:10px;
+  font-weight:800;
+  color:var(--accent);
+  background:var(--ringBg);
+  border:1px solid var(--ringBorder);
+}
+.screen.finished .seconds{
+  color:var(--warn);
+  background:rgba(245,158,11,.12);
+  border-color:rgba(245,158,11,.22);
+}
+.actions{
+  position:relative;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:9px;
+  padding:12px;
+}
+.action{
+  height:38px;
+  border-radius:13px;
+  border:1px solid transparent;
+  font-weight:800;
+  font-size:13px;
+  cursor:pointer;
+  letter-spacing:.02em;
+}
+.action:active{transform:translateY(1px) scale(.985)}
+.action:disabled{cursor:not-allowed}
+.open,
+.close{
+  color:#7f93ae;
+  background:var(--panel2);
+  border-color:var(--line);
+  box-shadow:none;
+  opacity:.72;
+}
+.action.selected{
+  color:var(--openText);
+  background:linear-gradient(135deg,var(--openGrad1),var(--openGrad2));
+  border-color:rgba(56,189,248,.28);
+  box-shadow:
+    0 8px 18px rgba(37,99,235,.28),
+    inset 0 1px 0 rgba(255,255,255,.16);
+  opacity:1;
+}
+.action.selected:disabled{
+  opacity:1;
+}
+.toast{
+  position:absolute;
+  z-index:10;
+  left:50%;
+  bottom:11px;
+  transform:translate(-50%,12px);
+  padding:7px 10px;
+  border-radius:9px;
+  background:rgba(2,6,23,.92);
+  color:#e2e8f0;
+  border:1px solid rgba(148,163,184,.16);
+  font-size:10px;
+  opacity:0;
+  pointer-events:none;
+  transition:.22s ease;
+  white-space:nowrap;
+}
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+.ringing .icon-box{animation:ringShake .65s ease-in-out infinite}
+.ringing .ring-line{
+  opacity:1;
+  animation:ringWave .65s ease-in-out infinite;
+}
+@keyframes ringShake{
+  0%,100%{transform:rotate(0deg)}
+  10%{transform:rotate(18deg)}
+  20%{transform:rotate(-16deg)}
+  30%{transform:rotate(14deg)}
+  40%{transform:rotate(-12deg)}
+  50%{transform:rotate(10deg)}
+  60%{transform:rotate(-8deg)}
+  70%{transform:rotate(6deg)}
+  80%{transform:rotate(-4deg)}
+  90%{transform:rotate(2deg)}
+}
+@keyframes ringWave{
+  0%{transform:scale(.72);opacity:.15}
+  50%{transform:scale(1.12);opacity:1}
+  100%{transform:scale(1.28);opacity:0}
+}
+</style>
+</head>
+<body>
+<div class="screen" id="screen">
+  <div class="topbar">
+    <div class="title-wrap">
+      <div class="icon-box">
+        <span class="ring-line ring-left"></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 5.8a5 5 0 0 1 10 0v1.3c0 .5.17.98.47 1.38l1.06 1.41c.43.57.67 1.27.67 1.98V15a2 2 0 0 1-2 2H6.8a2 2 0 0 1-2-2v-2.13c0-.71.24-1.41.67-1.98l1.06-1.41c.3-.4.47-.88.47-1.38V5.8"/>
+          <path d="M10 18a2 2 0 0 0 4 0"/>
+        </svg>
+        <span class="ring-line ring-right"></span>
+      </div>
+      <div class="title" id="title">定时</div>
+    </div>
+    <button class="lang" id="langBtn">EN</button>
+  </div>
+
+  <div class="status-row">
+    <div class="status-pill">
+      <span class="status-dot"></span>
+      <span id="statusText">定时已关闭</span>
+    </div>
+  </div>
+
+  <div class="time-panel">
+    <div class="time-group">
+      <div class="unit" id="hourLabel">时</div>
+      <div class="value" id="hourValue">00</div>
+    </div>
+
+    <div class="middle">
+      <div class="colon">:</div>
+      <div class="seconds" id="secondValue">00</div>
+    </div>
+
+    <div class="time-group">
+      <div class="unit" id="minuteLabel">分</div>
+      <div class="value" id="minuteValue">01</div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button class="action open" id="openBtn">打开</button>
+    <button class="action close selected" id="closeBtn" disabled>关闭</button>
+  </div>
+
+  <div class="toast" id="toast"></div>
+</div>
+
+<script>
+(() => {
+  const state = {
+    configuredSeconds: 60,
+    remainingSeconds: 60,
+    enabled: false,
+    finished: false,
+    lang: 'zh',
+    endAt: 0,
+    intervalId: null
+  };
+
+  const words = {
+    zh: {
+      title:'定时', hour:'时', minute:'分',
+      on:'倒计时中', off:'定时已关闭', done:'时间到啦',
+      open:'打开', close:'关闭',
+      started:'倒计时已开始', stopped:'定时已关闭'
+    },
+    en: {
+      title:'Timer', hour:'HOUR', minute:'MIN',
+      on:'Counting down', off:'Timer disabled', done:'Time is up',
+      open:'ON', close:'OFF',
+      started:'Countdown started', stopped:'Timer disabled'
+    }
+  };
+
+  const el = {
+    screen:document.getElementById('screen'),
+    title:document.getElementById('title'),
+    langBtn:document.getElementById('langBtn'),
+    statusText:document.getElementById('statusText'),
+    hourLabel:document.getElementById('hourLabel'),
+    minuteLabel:document.getElementById('minuteLabel'),
+    hourValue:document.getElementById('hourValue'),
+    minuteValue:document.getElementById('minuteValue'),
+    secondValue:document.getElementById('secondValue'),
+    openBtn:document.getElementById('openBtn'),
+    closeBtn:document.getElementById('closeBtn'),
+    toast:document.getElementById('toast')
+  };
+
+  let toastTimer = null;
+
+  function t(){ return words[state.lang]; }
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  function splitTime(total){
+    total = Math.max(0,Math.floor(total));
+    return {
+      hour:Math.floor(total/3600),
+      minute:Math.floor((total%3600)/60),
+      second:total%60
+    };
+  }
+
+  function showToast(message){
+    clearTimeout(toastTimer);
+    el.toast.textContent = message;
+    el.toast.classList.add('show');
+    toastTimer = setTimeout(() => el.toast.classList.remove('show'),1200);
+  }
+
+  function stopInterval(){
+    if(state.intervalId !== null){
+      clearInterval(state.intervalId);
+      state.intervalId = null;
+    }
+  }
+
+  function render(){
+    const display = splitTime(state.remainingSeconds);
+
+    el.title.textContent = t().title;
+    el.hourLabel.textContent = t().hour;
+    el.minuteLabel.textContent = t().minute;
+    el.langBtn.textContent = state.lang === 'zh' ? 'EN' : '中';
+
+    el.hourValue.textContent = pad(display.hour);
+    el.minuteValue.textContent = pad(display.minute);
+    el.secondValue.textContent = pad(display.second);
+
+    el.openBtn.textContent = t().open;
+    el.closeBtn.textContent = t().close;
+
+    el.statusText.textContent =
+      state.finished ? t().done :
+      state.enabled ? t().on :
+      t().off;
+
+    el.screen.classList.toggle('enabled',state.enabled);
+    el.screen.classList.toggle('finished',state.finished);
+    el.screen.classList.toggle('ringing',state.finished);
+
+    el.openBtn.disabled = state.enabled || state.finished;
+    el.closeBtn.disabled = !(state.enabled || state.finished);
+
+    el.openBtn.classList.toggle('selected', state.enabled || state.finished);
+    el.closeBtn.classList.toggle('selected', !state.enabled && !state.finished);
+  }
+
+  function updateCountdown(){
+    if(!state.enabled) return;
+
+    state.remainingSeconds = Math.max(
+      0,
+      Math.ceil((state.endAt - Date.now()) / 1000)
+    );
+
+    if(state.remainingSeconds <= 0){
+      stopInterval();
+      state.enabled = false;
+      state.finished = true;
+      render();
+      showToast(t().done);
+      return;
+    }
+
+    render();
+  }
+
+  function startCountdown(){
+    state.finished = false;
+    state.remainingSeconds = state.configuredSeconds;
+    state.enabled = true;
+    state.endAt = Date.now() + state.configuredSeconds * 1000;
+
+    stopInterval();
+    state.intervalId = setInterval(updateCountdown,250);
+
+    render();
+    showToast(t().started);
+  }
+
+  function stopCountdown(){
+    stopInterval();
+    state.enabled = false;
+    state.finished = false;
+    state.remainingSeconds = state.configuredSeconds;
+    render();
+    showToast(t().stopped);
+  }
+
+  el.openBtn.addEventListener('click',startCountdown);
+  el.closeBtn.addEventListener('click',stopCountdown);
+
+  el.langBtn.addEventListener('click',() => {
+    state.lang = state.lang === 'zh' ? 'en' : 'zh';
+    render();
+  });
+
+  document.addEventListener('visibilitychange',() => {
+    if(!document.hidden && state.enabled) updateCountdown();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
