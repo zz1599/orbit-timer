@@ -125,13 +125,14 @@
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    color: #fff;
+    color: #ffffff;
     font-size: 71px;
     font-weight: 300;
     line-height: 1;
     letter-spacing: -4px;
     text-shadow: 0 0 10px rgba(95,195,255,.78);
     white-space: nowrap;
+    transition: color .18s ease, text-shadow .18s ease;
   }
 
   .unit {
@@ -146,16 +147,22 @@
 
   .fan-area {
     position: absolute;
-    top: 141px;
-    left: 136px;
+    top: 132px;
+    left: 126px;
+    width: 98px;
+    height: 42px;
     display: flex;
-    align-items: flex-end;
-    gap: 4px;
-    z-index: 6;
-    cursor: pointer;
-    padding: 2px 4px;
-    border-radius: 10px;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 5px;
+    z-index: 12;
+    cursor: ew-resize;
+    padding: 10px 8px;
+    border-radius: 18px;
     overflow: visible;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
   }
 
   .fan-area:active {
@@ -169,6 +176,7 @@
     animation: spin 1.25s linear infinite;
     filter: drop-shadow(0 0 5px rgba(120,210,255,.78));
     flex: 0 0 auto;
+    margin-left: 3px;
   }
 
   .fan-svg {
@@ -179,20 +187,23 @@
 
   .fan-blade {
     fill: rgba(255,255,255,.96);
+    transition: fill .18s ease;
   }
 
   .fan-core {
     fill: rgba(255,255,255,1);
+    transition: fill .18s ease;
   }
 
 
   .fan-bars {
     display: flex;
     align-items: flex-end;
-    gap: 2px;
+    gap: 3px;
     height: 22px;
-    min-width: 26px;
+    width: 38px;
     overflow: visible;
+    flex: 0 0 auto;
   }
 
   .fan-bars b {
@@ -409,6 +420,12 @@
     tempValue.textContent = String(currentTemp);
 
     const litCount = currentTemp - MIN_TEMP + 1;
+    const currentIndex = currentTemp - MIN_TEMP;
+    const currentColor = tickColor(currentIndex);
+
+    // 温度数字颜色跟随当前所选刻度颜色变化
+    tempValue.style.color = currentColor;
+    tempValue.style.textShadow = `0 0 10px ${currentColor}`;
 
     tickEls.forEach((el, index) => {
       const isLit = index < litCount;
@@ -516,11 +533,16 @@
     layer.appendChild(d);
   }
 
-  // 风速1~7档
+  // 风速1~7档：支持点击竖线、鼠标拖动和触屏滑动
   const fan = document.getElementById("fan");
   const fanArea = document.getElementById("fanArea");
   const fanBars = [...document.querySelectorAll("#fanBars b")];
+  const fanBlades = [...document.querySelectorAll(".fan-blade")];
+  const fanCore = document.querySelector(".fan-core");
+
   let speedLevel = 4;
+  let speedDragging = false;
+  let activePointerId = null;
 
   const fanDurations = {
     1: 2.80,
@@ -532,17 +554,125 @@
     7: 0.48
   };
 
+  const fanColors = {
+    1: "#ff453a",
+    2: "#ff9f0a",
+    3: "#ffd60a",
+    4: "#30d158",
+    5: "#64d2ff",
+    6: "#0a84ff",
+    7: "#bf5af2"
+  };
+
   function updateFanSpeed(show = false) {
+    const color = fanColors[speedLevel];
+
     fan.style.animationDuration = `${fanDurations[speedLevel]}s`;
-    fanBars.forEach((bar, index) => {
-      bar.classList.toggle("on", index < speedLevel);
+    fan.style.filter = `drop-shadow(0 0 5px ${color})`;
+
+    fanBlades.forEach((blade) => {
+      blade.style.fill = color;
     });
-    if (show) showToast(`风速 ${speedLevel} 档`);
+
+    if (fanCore) {
+      fanCore.style.fill = color;
+    }
+
+    fanBars.forEach((bar, index) => {
+      const on = index < speedLevel;
+      bar.classList.toggle("on", on);
+      bar.style.background = on ? color : "rgba(170, 210, 235, .46)";
+      bar.style.boxShadow = on
+        ? `0 0 5px ${color}, inset 0 0 0 1px rgba(255,255,255,.12)`
+        : "inset 0 0 0 1px rgba(255,255,255,.06)";
+    });
+
+    if (show) {
+      showToast(`风速 ${speedLevel} 档`);
+    }
   }
 
-  fanArea.addEventListener("click", (event) => {
+  function setSpeedFromClientX(clientX, show = true) {
+    const rect = fanArea.getBoundingClientRect();
+
+    // 将整个风扇控制区横向均分为7段
+    const x = Math.max(0, Math.min(rect.width - 0.01, clientX - rect.left));
+    const nextLevel = Math.floor((x / rect.width) * 7) + 1;
+
+    if (nextLevel !== speedLevel) {
+      speedLevel = nextLevel;
+      updateFanSpeed(show);
+    } else if (show) {
+      updateFanSpeed(true);
+    }
+  }
+
+  fanBars.forEach((bar, index) => {
+    bar.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      speedLevel = index + 1;
+      updateFanSpeed(true);
+    });
+  });
+
+  fanArea.addEventListener("pointerdown", (event) => {
+    event.preventDefault();
     event.stopPropagation();
-    speedLevel = speedLevel >= 7 ? 1 : speedLevel + 1;
+
+    speedDragging = true;
+    activePointerId = event.pointerId;
+
+    try {
+      fanArea.setPointerCapture(event.pointerId);
+    } catch (_) {}
+
+    setSpeedFromClientX(event.clientX, true);
+  });
+
+  document.addEventListener("pointermove", (event) => {
+    if (!speedDragging) return;
+    if (activePointerId !== null && event.pointerId !== activePointerId) return;
+
+    event.preventDefault();
+    setSpeedFromClientX(event.clientX, false);
+  }, { passive: false });
+
+  document.addEventListener("pointerup", (event) => {
+    if (!speedDragging) return;
+    if (activePointerId !== null && event.pointerId !== activePointerId) return;
+
+    speedDragging = false;
+    activePointerId = null;
+    updateFanSpeed(true);
+  });
+
+  document.addEventListener("pointercancel", () => {
+    speedDragging = false;
+    activePointerId = null;
+  });
+
+  // 兼容部分浏览器的触摸事件
+  fanArea.addEventListener("touchstart", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    speedDragging = true;
+    const touch = event.touches[0];
+    if (touch) setSpeedFromClientX(touch.clientX, true);
+  }, { passive: false });
+
+  document.addEventListener("touchmove", (event) => {
+    if (!speedDragging) return;
+    event.preventDefault();
+
+    const touch = event.touches[0];
+    if (touch) setSpeedFromClientX(touch.clientX, false);
+  }, { passive: false });
+
+  document.addEventListener("touchend", () => {
+    if (!speedDragging) return;
+    speedDragging = false;
     updateFanSpeed(true);
   });
 
