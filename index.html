@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>240×240 空调四模式整圆滑动效果</title>
+<title>240×240 空调与智能控制八模式整圆滑动</title>
 <style>
   * { box-sizing: border-box; }
 
@@ -11,7 +11,9 @@
     margin: 0;
     width: 100%;
     height: 100%;
-    background: #111;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(42, 96, 135, .22), transparent 32%),
+      radial-gradient(circle at 50% 50%, #101821 0%, #070b10 55%, #020304 100%);
     display: grid;
     place-items: center;
     overflow: hidden;
@@ -24,6 +26,20 @@
     position: relative;
     overflow: visible;
     touch-action: none;
+    filter:
+      drop-shadow(0 20px 34px rgba(0, 0, 0, .70))
+      drop-shadow(0 0 18px rgba(80, 190, 255, .10));
+  }
+
+  .viewport::before {
+    content: "";
+    position: absolute;
+    inset: -18px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle, rgba(100, 220, 255, .12), transparent 62%);
+    pointer-events: none;
+    opacity: .75;
   }
 
   .slider {
@@ -38,6 +54,9 @@
   }
 
   .screen {
+    --accent: #48d8ff;
+    --accent-soft: rgba(72, 216, 255, .22);
+    --accent-ring: rgba(72, 216, 255, .72);
     position: relative;
     width: 240px;
     height: 240px;
@@ -45,15 +64,160 @@
     border-radius: 50%;
     overflow: hidden;
     background:
-      radial-gradient(circle at 50% 38%, rgba(35,90,140,.18), transparent 40%),
-      radial-gradient(circle at 50% 52%, #071019 0%, #02070d 62%, #000 100%);
-    border: 3px solid #585f67;
+      radial-gradient(circle at 50% 33%, rgba(255,255,255,.075), transparent 20%),
+      radial-gradient(circle at 50% 52%, rgba(10, 22, 32, .98) 0%, #050a10 58%, #000 100%);
+    border: 2px solid rgba(210, 225, 238, .38);
     box-shadow:
-      inset 0 0 0 2px rgba(255,255,255,.03),
-      inset 0 0 24px rgba(0,170,255,.10),
-      0 0 18px rgba(0,0,0,.8);
+      inset 0 0 0 1px rgba(255,255,255,.08),
+      inset 0 0 18px rgba(255,255,255,.035),
+      inset 0 0 34px var(--accent-soft),
+      0 0 0 1px rgba(255,255,255,.05),
+      0 0 26px rgba(0,0,0,.80),
+      0 0 28px var(--accent-soft);
     user-select: none;
     touch-action: none;
+  }
+
+  .screen::before {
+    content: "";
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow:
+      inset 0 0 18px rgba(255,255,255,.035),
+      0 0 18px var(--accent-soft);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .screen::after {
+    content: "";
+    position: absolute;
+    inset: 21px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 42%, var(--accent-soft), transparent 42%);
+    opacity: .46;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+
+  .ac-cool-screen {
+    --accent: #22d8ff;
+    --accent-soft: rgba(34, 216, 255, .22);
+    --accent-ring: rgba(34, 216, 255, .76);
+  }
+
+  .ac-heat-screen {
+    --accent: #ff8c1f;
+    --accent-soft: rgba(255, 118, 24, .22);
+    --accent-ring: rgba(255, 145, 28, .80);
+  }
+
+  .ac-fresh-screen {
+    --accent: #20e5ff;
+    --accent-soft: rgba(32, 229, 255, .20);
+    --accent-ring: rgba(32, 229, 255, .74);
+  }
+
+  .ac-dry-screen {
+    --accent: #28efaa;
+    --accent-soft: rgba(40, 239, 170, .20);
+    --accent-ring: rgba(40, 239, 170, .74);
+  }
+
+
+  .ac-cool-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(34, 216, 255, .96))
+      drop-shadow(0 0 16px rgba(0, 170, 255, .42));
+  }
+
+  .ac-snow-line {
+    fill: none;
+    stroke: #22d8ff;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ac-heat-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(255, 150, 38, .96))
+      drop-shadow(0 0 16px rgba(255, 90, 20, .45));
+  }
+
+  .ac-sun-core {
+    fill: #ff9a1f;
+  }
+
+  .ac-sun-ray {
+    fill: none;
+    stroke: #ffb84a;
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .ac-dry-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(40, 239, 170, .94))
+      drop-shadow(0 0 15px rgba(0, 220, 150, .42));
+  }
+
+  .ac-drop {
+    fill: #28efaa;
+  }
+
+  .ac-drop-small {
+    fill: #83ffcf;
+    opacity: .92;
+  }
+
+
+  .fresh-screen {
+    --accent: #1edcff;
+    --accent-soft: rgba(30, 220, 255, .22);
+    --accent-ring: rgba(30, 220, 255, .75);
+  }
+
+  .floor-screen {
+    --accent: #ff9a1f;
+    --accent-soft: rgba(255, 138, 28, .22);
+    --accent-ring: rgba(255, 160, 36, .78);
+  }
+
+  .light-screen {
+    --accent: #ffe76a;
+    --accent-soft: rgba(255, 220, 70, .22);
+    --accent-ring: rgba(255, 225, 95, .82);
+  }
+
+  .color-temp-screen {
+    --accent: #ffcf58;
+    --accent-soft: rgba(255, 205, 88, .17);
+    --accent-ring: rgba(128, 220, 255, .72);
+  }
+
+
+  .screen {
+    transition:
+      transform .34s cubic-bezier(.22,.78,.22,1),
+      opacity .34s cubic-bezier(.22,.78,.22,1),
+      filter .34s cubic-bezier(.22,.78,.22,1);
+  }
+
+  .screen.is-current {
+    transform: scale(1);
+    opacity: 1;
+    filter: none;
+  }
+
+  .screen.is-away {
+    transform: scale(.965);
+    opacity: .72;
+    filter: saturate(.86) brightness(.86);
   }
 
   .ticks {
@@ -65,87 +229,331 @@
   .tick {
     position: absolute;
     left: 117px;
-    top: 19px;
-    width: 7px;
+    top: 18px;
+    width: 6px;
     height: 15px;
     border-radius: 7px;
-    transform-origin: 3.5px 101px;
+    transform-origin: 3px 102px;
     cursor: pointer;
     transition: top .12s, height .12s, opacity .12s, filter .12s, background .12s, box-shadow .12s;
     background: rgba(255,255,255,.10);
-    opacity: .38;
+    opacity: .34;
     box-shadow: none;
   }
 
   .tick.selected {
-    top: 19px;
-    height: 15px;
+    top: 17px;
+    height: 18px;
     opacity: 1 !important;
-    filter: brightness(1.30);
+    filter: brightness(1.38);
     outline: 1px solid rgba(255,255,255,.92);
     outline-offset: 1px;
   }
 
   .mode-icon {
     position: absolute;
-    top: 49px;
+    top: 45px;
     left: 50%;
     transform: translateX(-50%);
-    width: 44px;
-    height: 44px;
+    width: 47px;
+    height: 47px;
     display: grid;
     place-items: center;
     z-index: 4;
     pointer-events: none;
   }
 
-  .mode-icon.text-icon {
-    width: auto;
-    height: auto;
-    line-height: 1;
-  }
-
   .mode-icon-svg {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     overflow: visible;
     display: block;
   }
 
-  .temp-group {
+  .fresh-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(30, 220, 255, 0.92))
+      drop-shadow(0 0 14px rgba(0, 190, 255, 0.40));
+  }
+
+  .fresh-blade { fill: #1edcff; }
+
+  .floor-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(255, 150, 40, 0.95))
+      drop-shadow(0 0 15px rgba(255, 95, 0, 0.48));
+  }
+
+  .floor-line {
+    fill: none;
+    stroke: #ff9a1f;
+    stroke-width: 3.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .floor-base {
+    fill: none;
+    stroke: rgba(255, 210, 118, 0.92);
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .light-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(255, 230, 92, 0.95))
+      drop-shadow(0 0 15px rgba(255, 190, 30, 0.45));
+  }
+
+  .light-ray {
+    stroke: #ffe76a;
+    stroke-width: 3;
+    stroke-linecap: round;
+    fill: none;
+  }
+
+  .light-bulb { fill: #ffd84a; }
+  .light-core { fill: rgba(255, 255, 218, 0.95); }
+
+
+  .light-screen .unit {
+    margin-left: 3px;
+    margin-top: 0;
+    font-size: 58px;
+    line-height: 1;
+  }
+
+  .brightness-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(255, 232, 90, 0.96))
+      drop-shadow(0 0 18px rgba(255, 190, 40, 0.46));
+  }
+
+  .brightness-circle {
+    fill: #ffd84a;
+  }
+
+  .brightness-ring {
+    fill: none;
+    stroke: #ffe76a;
+    stroke-width: 3;
+  }
+
+  .brightness-ray {
+    stroke: #ffe76a;
+    stroke-width: 3;
+    stroke-linecap: round;
+  }
+
+  .fresh-wind-icon {
+    filter:
+      drop-shadow(0 0 6px rgba(32, 225, 255, 0.92))
+      drop-shadow(0 0 14px rgba(0, 190, 255, 0.42));
+  }
+
+  .fresh-wind-line {
+    fill: none;
+    stroke: #1edcff;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .fresh-wind-dot {
+    fill: #1edcff;
+  }
+
+
+
+  .brightness-premium-bulb-icon {
+    filter:
+      drop-shadow(0 0 5px rgba(255, 220, 82, .86))
+      drop-shadow(0 0 13px rgba(255, 168, 42, .30));
+  }
+
+  .premium-rays path {
+    fill: none;
+    stroke: url(#premiumBulbStroke);
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: .82;
+  }
+
+  .premium-bulb-outline {
+    fill: none;
+    stroke: url(#premiumBulbStroke);
+    stroke-width: 3.1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .premium-inner-glow {
+    fill: none;
+    stroke: rgba(255, 242, 166, .72);
+    stroke-width: 2.0;
+    stroke-linecap: round;
+  }
+
+  .premium-base path {
+    fill: none;
+    stroke: #ffd84a;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    opacity: .9;
+  }
+
+
+
+  .ac-original-snow-main {
     position: absolute;
-    top: 92px;
-    left: calc(50% - 13px);
+    left: 50%;
     transform: translateX(-50%);
-    width: 142px;
-    height: 72px;
+    display: grid;
+    place-items: center;
     z-index: 4;
     pointer-events: none;
   }
 
-  .temp {
+  .ac-original-snowflake {
+    top: 52px;
+    color: #33dfff;
+    font-size: 37px;
+    line-height: 1;
+    text-shadow: 0 0 11px #00bfff;
+  }
+
+  .ac-original-ventilation {
+    top: 50px;
+    width: 38px;
+    height: 38px;
+    filter:
+      drop-shadow(0 0 6px rgba(30, 220, 255, 0.92))
+      drop-shadow(0 0 14px rgba(0, 190, 255, 0.40));
+  }
+
+  .ac-original-icon-svg {
+    width: 40px;
+    height: 40px;
+    overflow: visible;
+  }
+
+  .ac-original-mode-icon-blade {
+    fill: #1edcff;
+  }
+
+  .ac-original-dry {
+    top: 48px;
+    width: 42px;
+    height: 42px;
+    filter:
+      drop-shadow(0 0 6px rgba(35, 255, 185, 0.95))
+      drop-shadow(0 0 14px rgba(0, 230, 155, 0.50));
+  }
+
+  .ac-original-dry-svg {
+    width: 38px;
+    height: 38px;
+    overflow: visible;
+  }
+
+  .ac-original-mode-icon-drop {
+    fill: #22f0a8;
+  }
+
+
+  .temp-group {
     position: absolute;
-    top: 0;
+    top: 92px;
     left: 50%;
     transform: translateX(-50%);
+    width: 166px;
+    height: 72px;
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .temp-value {
+    display: inline-flex;
+    align-items: flex-start;
+    justify-content: center;
+    white-space: nowrap;
+  }
+
+  .temp {
+    position: static;
     color: #ffffff;
-    font-size: 71px;
+    font-size: 58px;
     font-weight: 300;
     line-height: 1;
-    letter-spacing: -4px;
-    text-shadow: 0 0 10px rgba(95,195,255,.78);
+    letter-spacing: -2px;
+    text-shadow:
+      0 0 9px currentColor,
+      0 0 18px rgba(255,255,255,.10);
     white-space: nowrap;
     transition: color .18s ease, text-shadow .18s ease;
   }
 
   .unit {
-    position: absolute;
-    top: 14px;
-    left: calc(50% + 43px);
-    font-size: 23px;
+    position: static;
+    margin-left: 3px;
+    margin-top: 6px;
+    font-size: 29px;
+    font-weight: 300;
+    line-height: 1;
     color: #fff;
-    text-shadow: 0 0 8px rgba(95,195,255,.78);
+    text-shadow: 0 0 10px rgba(95,195,255,.78);
     white-space: nowrap;
+  }
+
+  .light-screen .temp,
+  .light-screen .unit {
+    text-shadow: 0 0 10px rgba(255, 220, 80, .78);
+  }
+
+
+  .light-screen .temp.off-text {
+    font-size: 48px;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .color-temp-screen .temp-group {
+    top: 94px;
+  }
+
+  .color-temp-screen .temp {
+    font-size: 58px;
+  }
+
+  .color-temp-screen .temp-side {
+    margin-left: 3px;
+    margin-top: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1;
+  }
+
+  .color-temp-screen .unit {
+    margin: 0;
+    font-size: 29px;
+    line-height: .9;
+  }
+
+  .color-temp-screen .temp-tail {
+    margin-top: 2px;
+    font-size: 23px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: #fff;
+    text-shadow: 0 0 9px rgba(255, 220, 80, .78);
+    white-space: nowrap;
+    transition: color .18s ease, text-shadow .18s ease;
   }
 
   .fan-area {
@@ -227,10 +635,7 @@
   .fan-bars b:nth-child(5) { height: 16px; }
   .fan-bars b:nth-child(6) { height: 18px; }
   .fan-bars b:nth-child(7) { height: 20px; }
-
-  .fan-bars b.on {
-    opacity: 1;
-  }
+  .fan-bars b.on { opacity: 1; }
 
   .room {
     position: absolute;
@@ -239,6 +644,7 @@
     transform: translateX(-50%);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     color: #fff;
     font-size: 20px;
@@ -252,6 +658,31 @@
     height: 26px;
     flex: 0 0 auto;
     filter: drop-shadow(0 0 5px rgba(120,210,255,.75));
+  }
+
+  .bottom-label {
+    position: relative;
+    font-size: 21px;
+    letter-spacing: .14em;
+    color: #fff7bd;
+    text-shadow:
+      0 0 8px rgba(255, 220, 80, .88),
+      0 0 14px rgba(255, 190, 30, .42);
+    white-space: nowrap;
+  }
+
+  .bottom-label::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -8px;
+    width: 24px;
+    height: 2px;
+    border-radius: 4px;
+    transform: translateX(-50%);
+    background: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    opacity: .72;
   }
 
   .toast {
@@ -274,13 +705,20 @@
 
   .toast.show { opacity: 1; }
 
+
+  .light-screen .bottom-label::after,
+  .color-temp-screen .bottom-label::after {
+    display: none;
+  }
+
   .glass {
     position: absolute;
     inset: 4px;
     border-radius: 50%;
     background:
-      linear-gradient(145deg, rgba(255,255,255,.07), transparent 26%),
-      radial-gradient(circle at 64% 14%, rgba(255,255,255,.045), transparent 18%);
+      linear-gradient(145deg, rgba(255,255,255,.12), transparent 25%),
+      radial-gradient(circle at 63% 13%, rgba(255,255,255,.07), transparent 18%),
+      linear-gradient(215deg, transparent 0%, rgba(255,255,255,.035) 52%, transparent 72%);
     pointer-events: none;
     z-index: 20;
   }
@@ -289,14 +727,12 @@
 </style>
 </head>
 <body>
-<div class="viewport" id="viewport" aria-label="空调四模式整圆左滑切换">
+<div class="viewport" id="viewport" aria-label="空调与智能控制八模式左右滑动切换">
   <div class="slider" id="slider"></div>
 </div>
 
 <script>
-  const MIN_TEMP = 16;
-  const MAX_TEMP = 32;
-  const STEP_COUNT = MAX_TEMP - MIN_TEMP + 1;
+  const STEP_COUNT = 17;
   const ARC_HALF_ANGLE = 122;
   const START_ANGLE = -ARC_HALF_ANGLE;
   const END_ANGLE = ARC_HALF_ANGLE;
@@ -304,125 +740,10 @@
   const SLIDE_STEP = 240 + SLIDE_GAP;
 
   const slider = document.getElementById("slider");
-  const viewport = document.getElementById("viewport");
 
-  const modes = [
-    {
-      name: "制冷",
-      iconType: "text",
-      iconHTML: "❄",
-      iconStyle: {
-        color: "#33dfff",
-        fontSize: "37px",
-        textShadow: "0 0 11px #00bfff",
-        filter: "none"
-      },
-      tickColor(index) {
-        const t = index / (STEP_COUNT - 1);
-        const hue = 188 - t * 128;
-        return `hsl(${hue} 100% 58%)`;
-      },
-      fanBarColors: ["#0a84ff", "#34a0ff", "#22b8ff", "#5ad0ff", "#3fd9c6", "#6be6b8", "#30d158"]
-    },
-    {
-      name: "制热",
-      iconType: "text",
-      iconHTML: "☀",
-      iconStyle: {
-        color: "#ff9a1f",
-        fontSize: "37px",
-        textShadow: "0 0 8px rgba(255, 140, 0, 0.95), 0 0 16px rgba(255, 94, 0, 0.72), 0 0 24px rgba(255, 120, 20, 0.45)",
-        filter: "none"
-      },
-      tickColor(index) {
-        const t = index / (STEP_COUNT - 1);
-        const hue = 50 - t * 22;
-        const lightness = 60 - t * 6;
-        return `hsl(${hue} 100% ${lightness}%)`;
-      },
-      fanBarColors: ["#ffd95a", "#ffcf3a", "#ffbe2e", "#ffb01f", "#ffa21a", "#ff9214", "#ff7a0f"]
-    },
-    {
-      name: "新风",
-      iconType: "svg",
-      iconHTML: `
-        <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
-          <g transform="translate(24 24)">
-            <path fill="#1edcff" d="M1.2 -1.1
-              C 2.8 -7.8, 7.0 -12.8, 11.5 -14.0
-              C 14.4 -14.8, 17.1 -13.6, 18.5 -11.0
-              C 20.0 -8.2, 19.4 -4.8, 17.0 -2.0
-              C 14.0 1.4, 9.0 3.5, 4.8 3.0
-              C 2.0 2.7, 0.1 1.2, -0.2 -0.8
-              C -0.4 -2.0, 0.0 -2.6, 1.2 -1.1 Z"/>
-            <path fill="#1edcff" d="M1.2 -1.1
-              C 2.8 -7.8, 7.0 -12.8, 11.5 -14.0
-              C 14.4 -14.8, 17.1 -13.6, 18.5 -11.0
-              C 20.0 -8.2, 19.4 -4.8, 17.0 -2.0
-              C 14.0 1.4, 9.0 3.5, 4.8 3.0
-              C 2.0 2.7, 0.1 1.2, -0.2 -0.8
-              C -0.4 -2.0, 0.0 -2.6, 1.2 -1.1 Z" transform="rotate(120)"/>
-            <path fill="#1edcff" d="M1.2 -1.1
-              C 2.8 -7.8, 7.0 -12.8, 11.5 -14.0
-              C 14.4 -14.8, 17.1 -13.6, 18.5 -11.0
-              C 20.0 -8.2, 19.4 -4.8, 17.0 -2.0
-              C 14.0 1.4, 9.0 3.5, 4.8 3.0
-              C 2.0 2.7, 0.1 1.2, -0.2 -0.8
-              C -0.4 -2.0, 0.0 -2.6, 1.2 -1.1 Z" transform="rotate(240)"/>
-          </g>
-        </svg>
-      `,
-      iconStyle: {
-        color: "#1edcff",
-        fontSize: "0",
-        textShadow: "none",
-        filter: "drop-shadow(0 0 6px rgba(30, 220, 255, 0.92)) drop-shadow(0 0 14px rgba(0, 190, 255, 0.40))"
-      },
-      tickColor(index) {
-        const t = index / (STEP_COUNT - 1);
-        const hue = 192 - t * 42;
-        const lightness = 60 - t * 4;
-        return `hsl(${hue} 90% ${lightness}%)`;
-      },
-      fanBarColors: ["#59d7ff", "#7fe4ff", "#4ed7ea", "#73e3ea", "#48d8c2", "#70e4c9", "#6fdf8f"]
-    },
-    {
-      name: "除湿",
-      iconType: "svg",
-      iconHTML: `
-        <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
-          <path fill="#22f0a8" d="M12.8 7.8
-            C12.8 7.8 5.8 16.2 5.8 21.3
-            C5.8 26.8 9.1 30.6 13.1 30.6
-            C17.0 30.6 20.3 26.8 20.3 21.3
-            C20.3 16.2 12.8 7.8 12.8 7.8 Z"/>
-          <path fill="#22f0a8" d="M35.0 5.8
-            C35.0 5.8 29.1 12.9 29.1 17.2
-            C29.1 21.8 31.9 25.0 35.4 25.0
-            C38.8 25.0 41.7 21.8 41.7 17.2
-            C41.7 12.9 35.0 5.8 35.0 5.8 Z"/>
-          <path fill="#22f0a8" d="M24.0 22.8
-            C24.0 22.8 16.2 32.2 16.2 38.1
-            C16.2 44.4 20.0 48.6 24.6 48.6
-            C29.1 48.6 32.9 44.4 32.9 38.1
-            C32.9 32.2 24.0 22.8 24.0 22.8 Z"/>
-        </svg>
-      `,
-      iconStyle: {
-        color: "#22f0a8",
-        fontSize: "0",
-        textShadow: "none",
-        filter: "drop-shadow(0 0 6px rgba(35, 255, 185, 0.95)) drop-shadow(0 0 14px rgba(0, 230, 155, 0.50))"
-      },
-      tickColor(index) {
-        const t = index / (STEP_COUNT - 1);
-        const hue = 156 + t * 42;
-        const saturation = 92 - t * 6;
-        const lightness = 58 - t * 4;
-        return `hsl(${hue} ${saturation}% ${lightness}%)`;
-      },
-      fanBarColors: ["#69ddff", "#8be8ff", "#4ecff0", "#72dcf5", "#47cfcf", "#6fddd8", "#51b7ff"]
-    }
+  const COLOR_TEMP_VALUES = [
+    2700, 3000, 3200, 3500, 3800, 4000, 4300, 4500, 4800,
+    5000, 5300, 5500, 5800, 6000, 6200, 6400, 6500
   ];
 
   const fanDurations = {
@@ -435,69 +756,474 @@
     7: 0.48
   };
 
-  const states = modes.map(() => ({ temp: 29, speed: 4 }));
+  const modes = [
+
+    {
+      key: "ac-cool",
+      name: "制冷",
+      className: "ac-cool-screen",
+      min: 16,
+      max: 32,
+      initial: 29,
+      unit: "°C",
+      hasFan: true,
+      fanBarColors: ["#0a84ff", "#34a0ff", "#22b8ff", "#5ad0ff", "#3fd9c6", "#6be6b8", "#30d158"],
+      iconHTML: `
+        <div class="ac-original-snow-main ac-original-snowflake">❄</div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 188 - t * 128;
+        return `hsl(${hue} 100% 58%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "ac-heat",
+      name: "制热",
+      className: "ac-heat-screen",
+      min: 16,
+      max: 32,
+      initial: 29,
+      unit: "°C",
+      hasFan: true,
+      fanBarColors: ["#ffd95a", "#ffcf3a", "#ffbe2e", "#ffb01f", "#ffa21a", "#ff9214", "#ff7a0f"],
+      iconHTML: `
+        <div class="mode-icon ac-heat-icon">
+          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <circle class="ac-sun-core" cx="24" cy="24" r="8"/>
+            <path class="ac-sun-ray" d="M24 5.5 V10"/>
+            <path class="ac-sun-ray" d="M24 38 V42.5"/>
+            <path class="ac-sun-ray" d="M5.5 24 H10"/>
+            <path class="ac-sun-ray" d="M38 24 H42.5"/>
+            <path class="ac-sun-ray" d="M10.8 10.8 L14.0 14.0"/>
+            <path class="ac-sun-ray" d="M34.0 34.0 L37.2 37.2"/>
+            <path class="ac-sun-ray" d="M37.2 10.8 L34.0 14.0"/>
+            <path class="ac-sun-ray" d="M14.0 34.0 L10.8 37.2"/>
+          </svg>
+        </div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 50 - t * 22;
+        const lightness = 60 - t * 6;
+        return `hsl(${hue} 100% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "ac-fresh",
+      name: "通风",
+      className: "ac-fresh-screen",
+      min: 16,
+      max: 32,
+      initial: 29,
+      unit: "°C",
+      hasFan: true,
+      fanBarColors: ["#59d7ff", "#7fe4ff", "#4ed7ea", "#73e3ea", "#48d8c2", "#70e4c9", "#6fdf8f"],
+      iconHTML: `
+        <div class="ac-original-snow-main ac-original-ventilation">
+          <svg class="ac-original-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <g transform="translate(24 24)">
+              <path class="ac-original-mode-icon-blade" d="M1.2 -1.1
+                C 2.8 -7.8, 7.0 -12.8, 11.5 -14.0
+                C 14.4 -14.8, 17.1 -13.6, 18.5 -11.0
+                C 20.0 -8.2, 19.4 -4.8, 17.0 -2.0
+                C 14.0 1.4, 9.0 3.5, 4.8 3.0
+                C 2.0 2.7, 0.1 1.2, -0.2 -0.8
+                C -0.4 -2.0, 0.0 -2.6, 1.2 -1.1 Z"/>
+              <path class="ac-original-mode-icon-blade" d="M1.2 -1.1
+                C 2.8 -7.8, 7.0 -12.8, 11.5 -14.0
+                C 14.4 -14.8, 17.1 -13.6, 18.5 -11.0
+                C 20.0 -8.2, 19.4 -4.8, 17.0 -2.0
+                C 14.0 1.4, 9.0 3.5, 4.8 3.0
+                C 2.0 2.7, 0.1 1.2, -0.2 -0.8
+                C -0.4 -2.0, 0.0 -2.6, 1.2 -1.1 Z" transform="rotate(120)"/>
+              <path class="ac-original-mode-icon-blade" d="M1.2 -1.1
+                C 2.8 -7.8, 7.0 -12.8, 11.5 -14.0
+                C 14.4 -14.8, 17.1 -13.6, 18.5 -11.0
+                C 20.0 -8.2, 19.4 -4.8, 17.0 -2.0
+                C 14.0 1.4, 9.0 3.5, 4.8 3.0
+                C 2.0 2.7, 0.1 1.2, -0.2 -0.8
+                C -0.4 -2.0, 0.0 -2.6, 1.2 -1.1 Z" transform="rotate(240)"/>
+            </g>
+          </svg>
+        </div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 192 - t * 42;
+        const lightness = 60 - t * 4;
+        return `hsl(${hue} 90% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "ac-dry",
+      name: "除湿",
+      className: "ac-dry-screen",
+      min: 16,
+      max: 32,
+      initial: 29,
+      unit: "°C",
+      hasFan: true,
+      fanBarColors: ["#69ddff", "#8be8ff", "#4ecff0", "#72dcf5", "#47cfcf", "#6fddd8", "#51b7ff"],
+      iconHTML: `
+        <div class="ac-original-snow-main ac-original-dry">
+          <svg class="ac-original-dry-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <path class="ac-original-mode-icon-drop" d="M12.8 7.8
+              C12.8 7.8 5.8 16.2 5.8 21.3
+              C5.8 26.8 9.1 30.6 13.1 30.6
+              C17.0 30.6 20.3 26.8 20.3 21.3
+              C20.3 16.2 12.8 7.8 12.8 7.8 Z"/>
+            <path class="ac-original-mode-icon-drop" d="M35.0 5.8
+              C35.0 5.8 29.1 12.9 29.1 17.2
+              C29.1 21.8 31.9 25.0 35.4 25.0
+              C38.8 25.0 41.7 21.8 41.7 17.2
+              C41.7 12.9 35.0 5.8 35.0 5.8 Z"/>
+            <path class="ac-original-mode-icon-drop" d="M24.0 22.8
+              C24.0 22.8 16.2 32.2 16.2 38.1
+              C16.2 44.4 20.0 48.6 24.6 48.6
+              C29.1 48.6 32.9 44.4 32.9 38.1
+              C32.9 32.2 24.0 22.8 24.0 22.8 Z"/>
+          </svg>
+        </div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 156 + t * 42;
+        const saturation = 92 - t * 6;
+        const lightness = 58 - t * 4;
+        return `hsl(${hue} ${saturation}% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "fresh",
+      name: "新风",
+      className: "fresh-screen",
+      min: 16,
+      max: 32,
+      initial: 29,
+      unit: "°C",
+      hasFan: true,
+      fanBarColors: ["#59d7ff", "#7fe4ff", "#4ed7ea", "#73e3ea", "#48d8c2", "#70e4c9", "#6fdf8f"],
+      iconHTML: `
+        <div class="mode-icon fresh-wind-icon">
+          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <path class="fresh-wind-line" d="M8 17 H31 C36 17 38.5 13.5 36.5 10.5 C35.2 8.6 32.2 8.4 30.6 10.2"/>
+            <path class="fresh-wind-line" d="M7 25 H37 C42 25 44 29 41.6 32 C39.8 34.2 36.5 34 34.7 31.9"/>
+            <path class="fresh-wind-line" d="M11 33 H25 C29.2 33 31 36.4 29.1 38.7 C27.6 40.6 24.8 40.5 23.2 38.8"/>
+            <circle class="fresh-wind-dot" cx="8" cy="25" r="1.7"/>
+          </svg>
+        </div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 192 - t * 42;
+        const lightness = 60 - t * 4;
+        return `hsl(${hue} 90% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "floor",
+      name: "地暖",
+      className: "floor-screen",
+      min: 16,
+      max: 32,
+      initial: 29,
+      unit: "°C",
+      hasFan: false,
+      iconHTML: `
+        <div class="mode-icon floor-icon">
+          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <path class="floor-line" d="M14 12 C8 17 8 22 14 27"/>
+            <path class="floor-line" d="M24 9 C18 15 18 22 24 29"/>
+            <path class="floor-line" d="M34 12 C28 17 28 22 34 27"/>
+            <path class="floor-base" d="M9 36 H39"/>
+            <path class="floor-base" d="M13 41 H35"/>
+          </svg>
+        </div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 48 - t * 22;
+        const lightness = 61 - t * 7;
+        return `hsl(${hue} 100% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "light",
+      name: "亮度",
+      className: "light-screen",
+      min: 0,
+      max: 100,
+      initial: 60,
+      unit: "%",
+      hasFan: false,
+      iconHTML: `
+        <div class="mode-icon brightness-premium-bulb-icon">
+          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="premiumBulbStroke" x1="14" y1="8" x2="34" y2="43" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#fff3a6"/>
+                <stop offset="46%" stop-color="#ffd84a"/>
+                <stop offset="100%" stop-color="#ffad2f"/>
+              </linearGradient>
+            </defs>
+
+            <g class="premium-rays">
+              <path d="M24 5.8 V9.4"/>
+              <path d="M13.6 10.6 L16.0 13.2"/>
+              <path d="M34.4 10.6 L32.0 13.2"/>
+              <path d="M7.8 23.2 H11.2"/>
+              <path d="M40.2 23.2 H36.8"/>
+            </g>
+
+            <path class="premium-bulb-outline" d="M24 12.6
+              C17.2 12.6 13.1 17.3 13.1 23.4
+              C13.1 27.3 15.0 30.1 18.1 32.4
+              C19.8 33.7 20.6 35.2 20.6 37.1
+              H27.4
+              C27.4 35.2 28.2 33.7 29.9 32.4
+              C33.0 30.1 34.9 27.3 34.9 23.4
+              C34.9 17.3 30.8 12.6 24 12.6 Z"/>
+
+            <path class="premium-inner-glow" d="M19.2 24.7
+              C19.2 20.8 21.2 18.2 24.1 17.3"/>
+
+            <g class="premium-base">
+              <path d="M20.1 38.5 H27.9"/>
+              <path d="M20.9 41.0 H27.1"/>
+              <path d="M22.2 43.2 H25.8"/>
+            </g>
+          </svg>
+        </div>
+      `,
+      bottomHTML: `<div class="room"><div class="bottom-label">亮度</div></div>`,
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 44 + t * 8;
+        const saturation = 90 + t * 8;
+        const lightness = 38 + t * 24;
+        return `hsl(${hue} ${saturation}% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round((this.min + (this.max - this.min) * index / (STEP_COUNT - 1)) / 5) * 5;
+      }
+    },
+    {
+      key: "color-temp",
+      name: "色温",
+      className: "color-temp-screen",
+      min: 2700,
+      max: 6500,
+      initial: 4000,
+      unit: "K",
+      hasFan: false,
+      iconHTML: `
+        <div class="mode-icon brightness-premium-bulb-icon">
+          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <defs>
+              <linearGradient id="premiumBulbStroke" x1="14" y1="8" x2="34" y2="43" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stop-color="#fff3a6"/>
+                <stop offset="46%" stop-color="#ffd84a"/>
+                <stop offset="100%" stop-color="#ffad2f"/>
+              </linearGradient>
+            </defs>
+
+            <g class="premium-rays">
+              <path d="M24 5.8 V9.4"/>
+              <path d="M13.6 10.6 L16.0 13.2"/>
+              <path d="M34.4 10.6 L32.0 13.2"/>
+              <path d="M7.8 23.2 H11.2"/>
+              <path d="M40.2 23.2 H36.8"/>
+            </g>
+
+            <path class="premium-bulb-outline" d="M24 12.6
+              C17.2 12.6 13.1 17.3 13.1 23.4
+              C13.1 27.3 15.0 30.1 18.1 32.4
+              C19.8 33.7 20.6 35.2 20.6 37.1
+              H27.4
+              C27.4 35.2 28.2 33.7 29.9 32.4
+              C33.0 30.1 34.9 27.3 34.9 23.4
+              C34.9 17.3 30.8 12.6 24 12.6 Z"/>
+
+            <path class="premium-inner-glow" d="M19.2 24.7
+              C19.2 20.8 21.2 18.2 24.1 17.3"/>
+
+            <g class="premium-base">
+              <path d="M20.1 38.5 H27.9"/>
+              <path d="M20.9 41.0 H27.1"/>
+              <path d="M22.2 43.2 H25.8"/>
+            </g>
+          </svg>
+        </div>
+      `,
+      bottomHTML: `<div class="room"><div class="bottom-label">色温</div></div>`,
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const warm = [255, 188, 38];
+        const neutral = [255, 246, 190];
+        const cool = [106, 214, 255];
+        const mix = (a, b, p) => Math.round(a + (b - a) * p);
+        const rgb = (c) => `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+
+        if (t <= 0.52) {
+          const p = t / 0.52;
+          return rgb([
+            mix(warm[0], neutral[0], p),
+            mix(warm[1], neutral[1], p),
+            mix(warm[2], neutral[2], p)
+          ]);
+        }
+
+        const p = (t - 0.52) / 0.48;
+        return rgb([
+          mix(neutral[0], cool[0], p),
+          mix(neutral[1], cool[1], p),
+          mix(neutral[2], cool[2], p)
+        ]);
+      },
+      valueFromIndex(index) {
+        return COLOR_TEMP_VALUES[Math.max(0, Math.min(STEP_COUNT - 1, index))];
+      }
+    }
+  ];
+
+  const states = modes.map(mode => ({
+    value: mode.initial,
+    speed: 4
+  }));
+
   let modeIndex = 0;
   let startX = 0;
   let startY = 0;
   let startTranslate = 0;
   let isSwiping = false;
-  let isTempDragging = false;
+  let isValueDragging = false;
   let isSpeedDragging = false;
   let activeScreen = null;
   let activePointerId = null;
 
-  function homeIcon() {
+  function homeRoomHTML() {
     return `
-      <svg class="home-icon" viewBox="0 0 32 32" aria-hidden="true">
-        <path d="M5 15.5L16 6l11 9.5" fill="none" stroke="white" stroke-width="3"
-              stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M8.5 14.5V26h15V14.5" fill="none" stroke="white" stroke-width="3"
-              stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M13.5 26v-8h5v8" fill="none" stroke="white" stroke-width="3"
-              stroke-linejoin="round"/>
-      </svg>
+      <div class="room">
+        <svg class="home-icon" viewBox="0 0 32 32" aria-hidden="true">
+          <path d="M5 15.5L16 6l11 9.5" fill="none" stroke="white" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8.5 14.5V26h15V14.5" fill="none" stroke="white" stroke-width="3"
+                stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.5 26v-8h5v8" fill="none" stroke="white" stroke-width="3"
+                stroke-linejoin="round"/>
+        </svg>
+        <div>28.6°C</div>
+      </div>
     `;
   }
 
-  function fanIcon() {
+  function lightIconHTML() {
     return `
-      <svg class="fan-svg" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="1.9" class="fan-core"/>
-        <path d="M12 3.1c2.7 0 4.3 1.2 4.3 2.8 0 1.9-1.8 3.6-4.9 4.4-.6.2-1-.1-1.1-.7-.4-2.5-.2-4.5.6-5.6.3-.5.7-.9 1.1-.9z" class="fan-blade"/>
-        <path d="M20.9 12c0 2.7-1.2 4.3-2.8 4.3-1.9 0-3.6-1.8-4.4-4.9-.2-.6.1-1 .7-1.1 2.5-.4 4.5-.2 5.6.6.5.3.9.7.9 1.1z" class="fan-blade"/>
-        <path d="M12 20.9c-2.7 0-4.3-1.2-4.3-2.8 0-1.9 1.8-3.6 4.9-4.4.6-.2 1 .1 1.1.7.4 2.5.2 4.5-.6 5.6-.3.5-.7.9-1.1.9z" class="fan-blade"/>
-        <path d="M3.1 12c0-2.7 1.2-4.3 2.8-4.3 1.9 0 3.6 1.8 4.4 4.9.2.6-.1 1-.7 1.1-2.5.4-4.5.2-5.6-.6-.5-.3-.9-.7-.9-1.1z" class="fan-blade"/>
-      </svg>
+      <div class="mode-icon light-icon">
+        <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+          <line class="light-ray" x1="24" y1="5" x2="24" y2="10"/>
+          <line class="light-ray" x1="10" y1="12" x2="14" y2="16"/>
+          <line class="light-ray" x1="38" y1="12" x2="34" y2="16"/>
+          <line class="light-ray" x1="6" y1="27" x2="11" y2="27"/>
+          <line class="light-ray" x1="42" y1="27" x2="37" y2="27"/>
+          <path class="light-bulb" d="M24 12 C16.5 12 12 17.3 12 24.1 C12 28.8 14.4 32.0 18.0 34.4 C19.5 35.4 20.0 36.7 20.0 38.5 H28.0 C28.0 36.7 28.5 35.4 30.0 34.4 C33.6 32.0 36 28.8 36 24.1 C36 17.3 31.5 12 24 12 Z"/>
+          <path class="light-core" d="M21 18.5 C18.6 20.2 17.5 22.3 17.7 25.1 C17.9 27.5 19.2 29.5 21.1 30.8 C20.2 27.1 20.8 23.1 23.4 19.3 C24.0 18.4 22.0 17.8 21 18.5 Z"/>
+          <path class="light-ray" d="M20 41 H28"/>
+          <path class="light-ray" d="M21 45 H27"/>
+        </svg>
+      </div>
+    `;
+  }
+
+  function fanIconHTML() {
+    return `
+      <div class="fan" aria-hidden="true">
+        <svg class="fan-svg" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="1.9" class="fan-core"/>
+          <path d="M12 3.1c2.7 0 4.3 1.2 4.3 2.8 0 1.9-1.8 3.6-4.9 4.4-.6.2-1-.1-1.1-.7-.4-2.5-.2-4.5.6-5.6.3-.5.7-.9 1.1-.9z" class="fan-blade"/>
+          <path d="M20.9 12c0 2.7-1.2 4.3-2.8 4.3-1.9 0-3.6-1.8-4.4-4.9-.2-.6.1-1 .7-1.1 2.5-.4 4.5-.2 5.6.6.5.3.9.7.9 1.1z" class="fan-blade"/>
+          <path d="M12 20.9c-2.7 0-4.3-1.2-4.3-2.8 0-1.9 1.8-3.6 4.9-4.4.6-.2 1 .1 1.1.7.4 2.5.2 4.5-.6 5.6-.3.5-.7.9-1.1.9z" class="fan-blade"/>
+          <path d="M3.1 12c0-2.7 1.2-4.3 2.8-4.3 1.9 0 3.6 1.8 4.4 4.9.2.6-.1 1-.7 1.1-2.5.4-4.5.2-5.6-.6-.5-.3-.9-.7-.9-1.1z" class="fan-blade"/>
+        </svg>
+      </div>
+    `;
+  }
+
+  function fanAreaHTML() {
+    return `
+      <div class="fan-area" title="点击或拖动切换风量">
+        ${fanIconHTML()}
+        <div class="fan-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
+      </div>
+    `;
+  }
+
+  function valueDisplayHTML(mode, state) {
+    if (mode.key === "color-temp") {
+      const text = String(state.value);
+      return `
+        <div class="temp-group">
+          <div class="temp-value">
+            <span class="temp">${text.slice(0, 2)}</span>
+            <span class="temp-side">
+              <span class="unit">K</span>
+              <span class="temp-tail">${text.slice(2)}</span>
+            </span>
+          </div>
+        </div>
+      `;
+    }
+
+    return `
+      <div class="temp-group">
+        <div class="temp-value">
+          <span class="temp">${state.value}</span><span class="unit">${mode.unit}</span>
+        </div>
+      </div>
     `;
   }
 
   function createScreen(mode, index) {
+    const state = states[index];
     const screen = document.createElement("div");
-    screen.className = "screen";
+    screen.className = `screen ${mode.className}`;
     screen.dataset.modeIndex = String(index);
-    screen.setAttribute("aria-label", `空调${mode.name}模式效果图`);
+    screen.setAttribute("aria-label", `${mode.name}模式效果图`);
 
     screen.innerHTML = `
       <div class="ticks"></div>
-      <div class="mode-icon ${mode.iconType === "text" ? "text-icon" : ""}">${mode.iconHTML}</div>
-      <div class="temp-group">
-        <div class="temp">29</div>
-        <div class="unit">°C</div>
-      </div>
-      <div class="fan-area" title="点击或拖动切换风速">
-        <div class="fan" aria-hidden="true">${fanIcon()}</div>
-        <div class="fan-bars"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></div>
-      </div>
-      <div class="room">${homeIcon()}<div>28.6°C</div></div>
+      ${mode.iconHTML}
+      ${valueDisplayHTML(mode, state)}
+      ${mode.hasFan ? fanAreaHTML() : ""}
+      ${mode.bottomHTML}
       <div class="toast"></div>
       <div class="glass"></div>
     `;
-
-    const icon = screen.querySelector(".mode-icon");
-    icon.style.color = mode.iconStyle.color;
-    icon.style.fontSize = mode.iconStyle.fontSize;
-    icon.style.textShadow = mode.iconStyle.textShadow;
-    icon.style.filter = mode.iconStyle.filter;
 
     const ticks = screen.querySelector(".ticks");
     for (let i = 0; i < STEP_COUNT; i++) {
@@ -505,55 +1231,78 @@
       el.className = "tick";
       const angle = START_ANGLE + (END_ANGLE - START_ANGLE) * i / (STEP_COUNT - 1);
       el.style.transform = `rotate(${angle}deg)`;
-      el.dataset.temp = String(MIN_TEMP + i);
-      el.title = `${MIN_TEMP + i}°C`;
+      el.dataset.index = String(i);
+      el.dataset.value = String(valueFromIndex(mode, i));
+      el.title = `${el.dataset.value}${mode.unit}`;
+
       el.addEventListener("click", (event) => {
         event.stopPropagation();
-        setTemperature(screen, Number(el.dataset.temp));
+        setValue(screen, Number(el.dataset.value));
       });
+
       ticks.appendChild(el);
     }
 
     return screen;
   }
 
-  function currentTranslate() {
-    return -modeIndex * SLIDE_STEP;
+  function valueFromIndex(mode, index) {
+    return mode.valueFromIndex(index);
   }
 
-  function setSliderTranslate(x, animate = true) {
-    slider.style.transition = animate ? "transform .34s cubic-bezier(.22,.78,.22,1)" : "none";
-    slider.style.transform = `translateX(${x}px)`;
+  function indexFromValue(mode, value) {
+    let nearest = 0;
+    let bestDiff = Infinity;
+
+    for (let i = 0; i < STEP_COUNT; i++) {
+      const item = valueFromIndex(mode, i);
+      const diff = Math.abs(item - value);
+      if (diff < bestDiff) {
+        bestDiff = diff;
+        nearest = i;
+      }
+    }
+
+    return nearest;
   }
 
-  function switchTo(index) {
-    modeIndex = ((index % modes.length) + modes.length) % modes.length;
-    setSliderTranslate(currentTranslate(), true);
-  }
-
-  function updateAllScreens() {
-    [...document.querySelectorAll(".screen")].forEach((screen) => {
-      setTemperature(screen, states[Number(screen.dataset.modeIndex)].temp, false);
-      updateFanSpeed(screen, false);
-    });
-  }
-
-  function setTemperature(screen, value) {
+  function setValue(screen, value) {
     const index = Number(screen.dataset.modeIndex);
     const mode = modes[index];
     const state = states[index];
 
-    state.temp = Math.max(MIN_TEMP, Math.min(MAX_TEMP, Math.round(value)));
-    const tempValue = screen.querySelector(".temp");
-    tempValue.textContent = String(state.temp);
+    const currentIndex = indexFromValue(mode, value);
+    state.value = valueFromIndex(mode, currentIndex);
 
-    const litCount = state.temp - MIN_TEMP + 1;
-    const currentIndex = state.temp - MIN_TEMP;
     const currentColor = mode.tickColor(currentIndex);
+    const temp = screen.querySelector(".temp");
+    const tail = screen.querySelector(".temp-tail");
 
-    tempValue.style.color = currentColor;
-    tempValue.style.textShadow = `0 0 10px ${currentColor}`;
+    if (mode.key === "color-temp") {
+      const text = String(state.value);
+      temp.textContent = text.slice(0, 2);
+      if (tail) tail.textContent = text.slice(2);
+    } else if (mode.key === "light" && state.value === 0) {
+      temp.textContent = "OFF";
+      temp.classList.add("off-text");
+      const unit = screen.querySelector(".unit");
+      if (unit) unit.style.display = "none";
+    } else {
+      temp.textContent = String(state.value);
+      temp.classList.remove("off-text");
+      const unit = screen.querySelector(".unit");
+      if (unit) unit.style.display = "";
+    }
 
+    temp.style.color = currentColor;
+    temp.style.textShadow = `0 0 10px ${currentColor}`;
+
+    if (tail) {
+      tail.style.color = currentColor;
+      tail.style.textShadow = `0 0 9px ${currentColor}`;
+    }
+
+    const litCount = currentIndex + 1;
     [...screen.querySelectorAll(".tick")].forEach((el, tickIndex) => {
       const isLit = tickIndex < litCount;
       const isSelected = tickIndex === litCount - 1;
@@ -576,13 +1325,17 @@
   function updateFanSpeed(screen, show = false) {
     const index = Number(screen.dataset.modeIndex);
     const mode = modes[index];
+    if (!mode.hasFan) return;
+
     const state = states[index];
     const barColors = mode.fanBarColors;
     const color = barColors[state.speed - 1];
 
     const fan = screen.querySelector(".fan");
-    fan.style.animationDuration = `${fanDurations[state.speed]}s`;
-    fan.style.filter = `drop-shadow(0 0 5px ${color})`;
+    if (fan) {
+      fan.style.animationDuration = `${fanDurations[state.speed]}s`;
+      fan.style.filter = `drop-shadow(0 0 5px ${color})`;
+    }
 
     screen.querySelectorAll(".fan-blade").forEach((blade) => {
       blade.style.fill = color;
@@ -600,17 +1353,12 @@
         ? `0 0 5px ${barColor}, inset 0 0 0 1px rgba(255,255,255,.12)`
         : "inset 0 0 0 1px rgba(255,255,255,.06)";
     });
-
-    if (show) {
-      const toast = screen.querySelector(".toast");
-      toast.textContent = `风速 ${state.speed} 档`;
-      toast.classList.add("show");
-      clearTimeout(screen._toastTimer);
-      screen._toastTimer = setTimeout(() => toast.classList.remove("show"), 850);
-    }
   }
 
-  function temperatureFromPointer(screen, event) {
+  function valueFromPointer(screen, event) {
+    const index = Number(screen.dataset.modeIndex);
+    const mode = modes[index];
+
     const rect = screen.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -621,7 +1369,8 @@
     angle = Math.max(START_ANGLE, Math.min(END_ANGLE, angle));
 
     const ratio = (angle - START_ANGLE) / (END_ANGLE - START_ANGLE);
-    return MIN_TEMP + Math.round(ratio * (STEP_COUNT - 1));
+    const valueIndex = Math.round(ratio * (STEP_COUNT - 1));
+    return valueFromIndex(mode, valueIndex);
   }
 
   function pointerInArcArea(screen, event) {
@@ -635,11 +1384,15 @@
   }
 
   function setSpeedFromClientX(screen, clientX, show = true) {
+    const index = Number(screen.dataset.modeIndex);
+    const mode = modes[index];
+    if (!mode.hasFan) return;
+
     const area = screen.querySelector(".fan-area");
     const rect = area.getBoundingClientRect();
     const x = Math.max(0, Math.min(rect.width - 0.01, clientX - rect.left));
     const nextLevel = Math.floor((x / rect.width) * 7) + 1;
-    const state = states[Number(screen.dataset.modeIndex)];
+    const state = states[index];
 
     if (nextLevel !== state.speed) {
       state.speed = nextLevel;
@@ -649,12 +1402,40 @@
     }
   }
 
+  function currentTranslate() {
+    return -modeIndex * SLIDE_STEP;
+  }
+
+  function setSliderTranslate(x, animate = true) {
+    slider.style.transition = animate ? "transform .34s cubic-bezier(.22,.78,.22,1)" : "none";
+    slider.style.transform = `translateX(${x}px)`;
+  }
+
+  function switchTo(index) {
+    modeIndex = ((index % modes.length) + modes.length) % modes.length;
+    setSliderTranslate(currentTranslate(), true);
+    updateActiveScreens();
+  }
+
+
+  function updateActiveScreens() {
+    [...document.querySelectorAll(".screen")].forEach((screen, index) => {
+      screen.classList.toggle("is-current", index === modeIndex);
+      screen.classList.toggle("is-away", index !== modeIndex);
+    });
+  }
+
   modes.forEach((mode, index) => {
     slider.appendChild(createScreen(mode, index));
   });
 
-  updateAllScreens();
+  [...document.querySelectorAll(".screen")].forEach((screen) => {
+    setValue(screen, states[Number(screen.dataset.modeIndex)].value);
+    updateFanSpeed(screen, false);
+  });
+
   setSliderTranslate(0, false);
+  updateActiveScreens();
 
   slider.addEventListener("pointerdown", (event) => {
     const screen = event.target.closest(".screen");
@@ -676,8 +1457,8 @@
 
     if (pointerInArcArea(screen, event)) {
       event.preventDefault();
-      isTempDragging = true;
-      setTemperature(screen, temperatureFromPointer(screen, event));
+      isValueDragging = true;
+      setValue(screen, valueFromPointer(screen, event));
       try { slider.setPointerCapture(event.pointerId); } catch (_) {}
       return;
     }
@@ -697,9 +1478,9 @@
       return;
     }
 
-    if (isTempDragging) {
+    if (isValueDragging) {
       event.preventDefault();
-      setTemperature(activeScreen, temperatureFromPointer(activeScreen, event));
+      setValue(activeScreen, valueFromPointer(activeScreen, event));
       return;
     }
 
@@ -724,16 +1505,19 @@
       const dx = event.clientX - startX;
       const dy = event.clientY - startY;
 
-      // 单纯左滑切换整圆：制冷 → 制热 → 新风 → 除湿 → 制冷
-      if (Math.abs(dx) >= 42 && Math.abs(dx) > Math.abs(dy) * 1.2 && dx < 0) {
-        switchTo(modeIndex + 1);
+      if (Math.abs(dx) >= 42 && Math.abs(dx) > Math.abs(dy) * 1.2) {
+        if (dx < 0) {
+          switchTo(modeIndex + 1);
+        } else {
+          switchTo(modeIndex - 1);
+        }
       } else {
         setSliderTranslate(currentTranslate(), true);
       }
     }
 
     isSwiping = false;
-    isTempDragging = false;
+    isValueDragging = false;
     isSpeedDragging = false;
     activeScreen = null;
     activePointerId = null;
@@ -741,7 +1525,7 @@
 
   slider.addEventListener("pointercancel", () => {
     isSwiping = false;
-    isTempDragging = false;
+    isValueDragging = false;
     isSpeedDragging = false;
     activeScreen = null;
     activePointerId = null;
