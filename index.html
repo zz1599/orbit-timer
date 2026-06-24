@@ -57,6 +57,10 @@
     --accent: #48d8ff;
     --accent-soft: rgba(72, 216, 255, .22);
     --accent-ring: rgba(72, 216, 255, .72);
+    --dynamic-surface-1: rgba(255,255,255,0);
+    --dynamic-surface-2: rgba(255,255,255,0);
+    --dynamic-glow-inner: rgba(255,255,255,0);
+    --dynamic-glow-outer: rgba(255,255,255,0);
     position: relative;
     width: 240px;
     height: 240px;
@@ -65,17 +69,25 @@
     overflow: hidden;
     background:
       radial-gradient(circle at 50% 33%, rgba(255,255,255,.075), transparent 20%),
-      radial-gradient(circle at 50% 52%, rgba(10, 22, 32, .98) 0%, #050a10 58%, #000 100%);
+      radial-gradient(circle at 50% 52%, var(--dynamic-surface-1) 0%, var(--dynamic-surface-2) 34%, rgba(10, 22, 32, .98) 64%, #050a10 82%, #000 100%);
     border: 2px solid rgba(210, 225, 238, .38);
     box-shadow:
       inset 0 0 0 1px rgba(255,255,255,.08),
       inset 0 0 18px rgba(255,255,255,.035),
       inset 0 0 34px var(--accent-soft),
+      inset 0 0 58px var(--dynamic-glow-inner),
       0 0 0 1px rgba(255,255,255,.05),
       0 0 26px rgba(0,0,0,.80),
-      0 0 28px var(--accent-soft);
+      0 0 28px var(--accent-soft),
+      0 0 36px var(--dynamic-glow-outer);
     user-select: none;
     touch-action: none;
+    transition:
+      transform .34s cubic-bezier(.22,.78,.22,1),
+      opacity .34s cubic-bezier(.22,.78,.22,1),
+      filter .34s cubic-bezier(.22,.78,.22,1),
+      background .24s ease,
+      box-shadow .24s ease;
   }
 
   .screen::before {
@@ -97,10 +109,12 @@
     inset: 21px;
     border-radius: 50%;
     background:
-      radial-gradient(circle at 50% 42%, var(--accent-soft), transparent 42%);
-    opacity: .46;
+      radial-gradient(circle at 50% 42%, var(--accent-soft), transparent 42%),
+      radial-gradient(circle at 50% 56%, var(--dynamic-glow-inner), transparent 62%);
+    opacity: .60;
     pointer-events: none;
     z-index: 1;
+    transition: background .24s ease, opacity .24s ease;
   }
 
 
@@ -201,12 +215,7 @@
   }
 
 
-  .screen {
-    transition:
-      transform .34s cubic-bezier(.22,.78,.22,1),
-      opacity .34s cubic-bezier(.22,.78,.22,1),
-      filter .34s cubic-bezier(.22,.78,.22,1);
-  }
+
 
   .screen.is-current {
     transform: scale(1);
@@ -459,6 +468,43 @@
 
   .ac-original-mode-icon-drop {
     fill: #22f0a8;
+  }
+
+
+
+  .refbulb-icon {
+    top: 45px;
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    opacity: .82;
+  }
+
+  .refbulb-svg {
+    width: 36px;
+    height: 36px;
+    overflow: visible;
+  }
+
+  .refbulb-light {
+    filter: drop-shadow(0 0 6px rgba(255, 214, 95, .28));
+  }
+
+  .refbulb-colortemp {
+    filter: drop-shadow(0 0 6px rgba(255, 227, 154, .24));
+  }
+
+  .refbulb-light .refbulb-rays,
+  .refbulb-light .refbulb-body,
+  .refbulb-light .refbulb-base {
+    fill: #ffe07a;
+  }
+
+  .refbulb-colortemp .refbulb-rays,
+  .refbulb-colortemp .refbulb-body,
+  .refbulb-colortemp .refbulb-base {
+    fill: #fff0b6;
   }
 
 
@@ -982,41 +1028,27 @@
       unit: "%",
       hasFan: false,
       iconHTML: `
-        <div class="mode-icon brightness-premium-bulb-icon">
-          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
-            <defs>
-              <linearGradient id="premiumBulbStroke" x1="14" y1="8" x2="34" y2="43" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#fff3a6"/>
-                <stop offset="46%" stop-color="#ffd84a"/>
-                <stop offset="100%" stop-color="#ffad2f"/>
-              </linearGradient>
-            </defs>
-
-            <g class="premium-rays">
-              <path d="M24 5.8 V9.4"/>
-              <path d="M13.6 10.6 L16.0 13.2"/>
-              <path d="M34.4 10.6 L32.0 13.2"/>
-              <path d="M7.8 23.2 H11.2"/>
-              <path d="M40.2 23.2 H36.8"/>
+        <div class="mode-icon refbulb-icon refbulb-light">
+          <svg class="refbulb-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <g class="refbulb-rays">
+              <rect x="22.2" y="4.8" width="3.6" height="7.2" rx="1.8"/>
+              <rect x="10.6" y="10.2" width="3.6" height="7.0" rx="1.8" transform="rotate(-50 12.4 13.7)"/>
+              <rect x="33.8" y="10.2" width="3.6" height="7.0" rx="1.8" transform="rotate(50 35.6 13.7)"/>
+              <rect x="5.2" y="22.0" width="7.2" height="3.6" rx="1.8"/>
+              <rect x="35.6" y="22.0" width="7.2" height="3.6" rx="1.8"/>
+              <rect x="10.6" y="30.2" width="3.6" height="7.0" rx="1.8" transform="rotate(50 12.4 33.7)"/>
+              <rect x="33.8" y="30.2" width="3.6" height="7.0" rx="1.8" transform="rotate(-50 35.6 33.7)"/>
             </g>
-
-            <path class="premium-bulb-outline" d="M24 12.6
-              C17.2 12.6 13.1 17.3 13.1 23.4
-              C13.1 27.3 15.0 30.1 18.1 32.4
-              C19.8 33.7 20.6 35.2 20.6 37.1
-              H27.4
-              C27.4 35.2 28.2 33.7 29.9 32.4
-              C33.0 30.1 34.9 27.3 34.9 23.4
-              C34.9 17.3 30.8 12.6 24 12.6 Z"/>
-
-            <path class="premium-inner-glow" d="M19.2 24.7
-              C19.2 20.8 21.2 18.2 24.1 17.3"/>
-
-            <g class="premium-base">
-              <path d="M20.1 38.5 H27.9"/>
-              <path d="M20.9 41.0 H27.1"/>
-              <path d="M22.2 43.2 H25.8"/>
-            </g>
+            <path class="refbulb-body" d="M24 10.5
+              C17.8 10.5 13.8 15.0 13.8 21.0
+              C13.8 25.0 15.9 28.0 18.8 30.2
+              C20.2 31.2 20.9 32.8 20.9 34.9
+              H27.1
+              C27.1 32.8 27.8 31.2 29.2 30.2
+              C32.1 28.0 34.2 25.0 34.2 21.0
+              C34.2 15.0 30.2 10.5 24 10.5 Z"/>
+            <rect class="refbulb-base" x="19.8" y="36.6" width="8.4" height="2.6" rx="1.3"/>
+            <rect class="refbulb-base" x="20.6" y="40.2" width="6.8" height="2.2" rx="1.1"/>
           </svg>
         </div>
       `,
@@ -1042,41 +1074,27 @@
       unit: "K",
       hasFan: false,
       iconHTML: `
-        <div class="mode-icon brightness-premium-bulb-icon">
-          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
-            <defs>
-              <linearGradient id="premiumBulbStroke" x1="14" y1="8" x2="34" y2="43" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#fff3a6"/>
-                <stop offset="46%" stop-color="#ffd84a"/>
-                <stop offset="100%" stop-color="#ffad2f"/>
-              </linearGradient>
-            </defs>
-
-            <g class="premium-rays">
-              <path d="M24 5.8 V9.4"/>
-              <path d="M13.6 10.6 L16.0 13.2"/>
-              <path d="M34.4 10.6 L32.0 13.2"/>
-              <path d="M7.8 23.2 H11.2"/>
-              <path d="M40.2 23.2 H36.8"/>
+        <div class="mode-icon refbulb-icon refbulb-colortemp">
+          <svg class="refbulb-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <g class="refbulb-rays">
+              <rect x="22.2" y="4.8" width="3.6" height="7.2" rx="1.8"/>
+              <rect x="10.6" y="10.2" width="3.6" height="7.0" rx="1.8" transform="rotate(-50 12.4 13.7)"/>
+              <rect x="33.8" y="10.2" width="3.6" height="7.0" rx="1.8" transform="rotate(50 35.6 13.7)"/>
+              <rect x="5.2" y="22.0" width="7.2" height="3.6" rx="1.8"/>
+              <rect x="35.6" y="22.0" width="7.2" height="3.6" rx="1.8"/>
+              <rect x="10.6" y="30.2" width="3.6" height="7.0" rx="1.8" transform="rotate(50 12.4 33.7)"/>
+              <rect x="33.8" y="30.2" width="3.6" height="7.0" rx="1.8" transform="rotate(-50 35.6 33.7)"/>
             </g>
-
-            <path class="premium-bulb-outline" d="M24 12.6
-              C17.2 12.6 13.1 17.3 13.1 23.4
-              C13.1 27.3 15.0 30.1 18.1 32.4
-              C19.8 33.7 20.6 35.2 20.6 37.1
-              H27.4
-              C27.4 35.2 28.2 33.7 29.9 32.4
-              C33.0 30.1 34.9 27.3 34.9 23.4
-              C34.9 17.3 30.8 12.6 24 12.6 Z"/>
-
-            <path class="premium-inner-glow" d="M19.2 24.7
-              C19.2 20.8 21.2 18.2 24.1 17.3"/>
-
-            <g class="premium-base">
-              <path d="M20.1 38.5 H27.9"/>
-              <path d="M20.9 41.0 H27.1"/>
-              <path d="M22.2 43.2 H25.8"/>
-            </g>
+            <path class="refbulb-body" d="M24 10.5
+              C17.8 10.5 13.8 15.0 13.8 21.0
+              C13.8 25.0 15.9 28.0 18.8 30.2
+              C20.2 31.2 20.9 32.8 20.9 34.9
+              H27.1
+              C27.1 32.8 27.8 31.2 29.2 30.2
+              C32.1 28.0 34.2 25.0 34.2 21.0
+              C34.2 15.0 30.2 10.5 24 10.5 Z"/>
+            <rect class="refbulb-base" x="19.8" y="36.6" width="8.4" height="2.6" rx="1.3"/>
+            <rect class="refbulb-base" x="20.6" y="40.2" width="6.8" height="2.2" rx="1.1"/>
           </svg>
         </div>
       `,
@@ -1302,6 +1320,8 @@
       tail.style.textShadow = `0 0 9px ${currentColor}`;
     }
 
+    setCircleVisual(screen, mode, currentIndex, currentColor);
+
     const litCount = currentIndex + 1;
     [...screen.querySelectorAll(".tick")].forEach((el, tickIndex) => {
       const isLit = tickIndex < litCount;
@@ -1320,6 +1340,58 @@
         el.style.opacity = ".38";
       }
     });
+  }
+
+
+  function withAlpha(color, alpha) {
+    const a = Math.max(0, Math.min(1, alpha));
+    if (color.startsWith("rgb(")) {
+      return color.replace("rgb(", "rgba(").replace(")", `, ${a})`);
+    }
+    if (color.startsWith("rgba(")) {
+      const parts = color.slice(5, -1).split(",").map(s => s.trim());
+      return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${a})`;
+    }
+    if (color.startsWith("hsl(")) {
+      const inner = color.slice(4, -1);
+      return `hsl(${inner} / ${a})`;
+    }
+    return color;
+  }
+
+  function setCircleVisual(screen, mode, currentIndex, currentColor) {
+    const t = currentIndex / (STEP_COUNT - 1);
+
+    if (mode.key === "light") {
+      const surface1 = withAlpha(currentColor, 0.05 + t * 0.22);
+      const surface2 = withAlpha(currentColor, 0.02 + t * 0.10);
+      const glowInner = withAlpha(currentColor, 0.04 + t * 0.22);
+      const glowOuter = withAlpha(currentColor, 0.02 + t * 0.18);
+
+      screen.style.setProperty("--dynamic-surface-1", surface1);
+      screen.style.setProperty("--dynamic-surface-2", surface2);
+      screen.style.setProperty("--dynamic-glow-inner", glowInner);
+      screen.style.setProperty("--dynamic-glow-outer", glowOuter);
+      return;
+    }
+
+    if (mode.key === "color-temp") {
+      const surface1 = withAlpha(currentColor, 0.12 + t * 0.10);
+      const surface2 = withAlpha(currentColor, 0.05 + t * 0.06);
+      const glowInner = withAlpha(currentColor, 0.10 + t * 0.12);
+      const glowOuter = withAlpha(currentColor, 0.06 + t * 0.10);
+
+      screen.style.setProperty("--dynamic-surface-1", surface1);
+      screen.style.setProperty("--dynamic-surface-2", surface2);
+      screen.style.setProperty("--dynamic-glow-inner", glowInner);
+      screen.style.setProperty("--dynamic-glow-outer", glowOuter);
+      return;
+    }
+
+    screen.style.setProperty("--dynamic-surface-1", "rgba(255,255,255,0)");
+    screen.style.setProperty("--dynamic-surface-2", "rgba(255,255,255,0)");
+    screen.style.setProperty("--dynamic-glow-inner", "rgba(255,255,255,0)");
+    screen.style.setProperty("--dynamic-glow-outer", "rgba(255,255,255,0)");
   }
 
   function updateFanSpeed(screen, show = false) {
