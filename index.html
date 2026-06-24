@@ -488,7 +488,7 @@
   }
 
   .refbulb-light {
-    filter: drop-shadow(0 0 6px rgba(255, 214, 95, .28));
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, .26));
   }
 
   .refbulb-colortemp {
@@ -498,7 +498,7 @@
   .refbulb-light .refbulb-rays,
   .refbulb-light .refbulb-body,
   .refbulb-light .refbulb-base {
-    fill: #ffe07a;
+    fill: #f7fbff;
   }
 
   .refbulb-colortemp .refbulb-rays,
@@ -1052,13 +1052,11 @@
           </svg>
         </div>
       `,
-      bottomHTML: `<div class="room"><div class="bottom-label">亮度</div></div>`,
+      bottomHTML: `<div class="room"></div>`,
       tickColor(index) {
         const t = index / (STEP_COUNT - 1);
-        const hue = 44 + t * 8;
-        const saturation = 90 + t * 8;
-        const lightness = 38 + t * 24;
-        return `hsl(${hue} ${saturation}% ${lightness}%)`;
+        const v = Math.round(100 + t * 155);
+        return `rgb(${v}, ${v}, ${v})`;
       },
       valueFromIndex(index) {
         return Math.round((this.min + (this.max - this.min) * index / (STEP_COUNT - 1)) / 5) * 5;
@@ -1098,7 +1096,7 @@
           </svg>
         </div>
       `,
-      bottomHTML: `<div class="room"><div class="bottom-label">色温</div></div>`,
+      bottomHTML: `<div class="room"></div>`,
       tickColor(index) {
         const t = index / (STEP_COUNT - 1);
         const warm = [255, 188, 38];
@@ -1295,25 +1293,33 @@
     const currentColor = mode.tickColor(currentIndex);
     const temp = screen.querySelector(".temp");
     const tail = screen.querySelector(".temp-tail");
+    const unit = screen.querySelector(".unit");
 
     if (mode.key === "color-temp") {
       const text = String(state.value);
       temp.textContent = text.slice(0, 2);
       if (tail) tail.textContent = text.slice(2);
+      if (unit) unit.style.display = "";
     } else if (mode.key === "light" && state.value === 0) {
       temp.textContent = "OFF";
       temp.classList.add("off-text");
-      const unit = screen.querySelector(".unit");
       if (unit) unit.style.display = "none";
     } else {
       temp.textContent = String(state.value);
       temp.classList.remove("off-text");
-      const unit = screen.querySelector(".unit");
       if (unit) unit.style.display = "";
     }
 
     temp.style.color = currentColor;
     temp.style.textShadow = `0 0 10px ${currentColor}`;
+
+    if ((mode.key === "color-temp" || mode.key === "light") && unit) {
+      unit.style.color = currentColor;
+      unit.style.textShadow = `0 0 9px ${currentColor}`;
+    } else if (unit) {
+      unit.style.color = "";
+      unit.style.textShadow = "";
+    }
 
     if (tail) {
       tail.style.color = currentColor;
@@ -1363,10 +1369,11 @@
     const t = currentIndex / (STEP_COUNT - 1);
 
     if (mode.key === "light") {
-      const surface1 = withAlpha(currentColor, 0.05 + t * 0.22);
-      const surface2 = withAlpha(currentColor, 0.02 + t * 0.10);
-      const glowInner = withAlpha(currentColor, 0.04 + t * 0.22);
-      const glowOuter = withAlpha(currentColor, 0.02 + t * 0.18);
+      const white = "rgb(255, 255, 255)";
+      const surface1 = withAlpha(white, 0.04 + t * 0.24);
+      const surface2 = withAlpha(white, 0.01 + t * 0.12);
+      const glowInner = withAlpha(white, 0.03 + t * 0.24);
+      const glowOuter = withAlpha(white, 0.01 + t * 0.20);
 
       screen.style.setProperty("--dynamic-surface-1", surface1);
       screen.style.setProperty("--dynamic-surface-2", surface2);
