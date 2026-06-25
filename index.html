@@ -770,6 +770,898 @@
   }
 
   @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 亮度模式：去掉刻度，放入客厅灯图 */
+  .light-screen .ticks {
+    display: none !important;
+  }
+
+  .light-screen .brightness-photo {
+    position: absolute;
+    inset: 12px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 2;
+    pointer-events: none;
+    opacity: .92;
+    box-shadow:
+      inset 0 0 28px rgba(0,0,0,.58),
+      inset 0 0 0 1px rgba(255,255,255,.10);
+  }
+
+  .light-screen .brightness-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 32%;
+    filter: brightness(.78) contrast(1.05) saturate(.95);
+    display: block;
+  }
+
+  .light-screen .brightness-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 50% 24%, rgba(255,240,190,.32), transparent 32%),
+      radial-gradient(circle at 50% 55%, rgba(0,0,0,.18), rgba(0,0,0,.54) 72%, rgba(0,0,0,.76) 100%);
+    pointer-events: none;
+  }
+
+  .light-screen .refbulb-icon,
+  .light-screen .temp-group {
+    z-index: 6;
+  }
+
+  .light-screen .temp,
+  .light-screen .unit {
+    color: #ffffff !important;
+    text-shadow:
+      0 0 9px rgba(255,255,255,.94),
+      0 0 20px rgba(255,228,150,.72) !important;
+  }
+
+
+  /* 亮度模式背景图可见性修正版 */
+  .light-screen .ticks {
+    display: none !important;
+  }
+
+  .light-screen .brightness-photo {
+    position: absolute !important;
+    inset: 7px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+    opacity: 1 !important;
+    background: #000 !important;
+    box-shadow:
+      inset 0 0 18px rgba(0,0,0,.28),
+      inset 0 0 0 1px rgba(255,255,255,.20) !important;
+  }
+
+  .light-screen .brightness-photo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center bottom !important;
+    filter: brightness(1.06) contrast(1.02) saturate(1.02) !important;
+    display: block !important;
+  }
+
+  .light-screen .brightness-photo::after {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    border-radius: 50% !important;
+    background:
+      radial-gradient(circle at 50% 18%, rgba(255, 244, 205, .06), transparent 28%),
+      radial-gradient(circle at 50% 58%, rgba(0,0,0,.00), rgba(0,0,0,.18) 76%, rgba(0,0,0,.38) 100%) !important;
+    pointer-events: none !important;
+  }
+
+  .light-screen::after {
+    opacity: .18 !important;
+  }
+
+  .light-screen .glass {
+    opacity: .45 !important;
+  }
+
+  .light-screen .refbulb-icon,
+  .light-screen .temp-group {
+    z-index: 6 !important;
+  }
+
+  .light-screen .temp,
+  .light-screen .unit {
+    color: #ffffff !important;
+    text-shadow:
+      0 0 10px rgba(0,0,0,.75),
+      0 0 16px rgba(255,236,180,.85) !important;
+  }
+
+
+  /* 亮度、色温页面去掉图标 */
+  .light-screen .refbulb-icon,
+  .color-temp-screen .refbulb-icon {
+    display: none !important;
+  }
+
+  .light-screen .temp-group,
+  .color-temp-screen .temp-group {
+    z-index: 8 !important;
+  }
+
+
+  /* 亮度页：顶部灯具 + 向下打光 */
+  .light-screen .brightness-photo {
+    inset: 8px !important;
+    box-shadow:
+      inset 0 0 16px rgba(0,0,0,.18),
+      inset 0 0 0 1px rgba(255,255,255,.18) !important;
+  }
+
+  .light-screen .brightness-photo img {
+    object-position: center bottom !important;
+    filter: brightness(var(--room-brightness, 0.78)) contrast(1.02) saturate(1.02) !important;
+    transition: filter .18s linear !important;
+  }
+
+  .light-screen .brightness-photo::after {
+    background:
+      radial-gradient(circle at 50% 60%, rgba(0,0,0,.00), rgba(0,0,0,.12) 74%, rgba(0,0,0,.28) 100%) !important;
+  }
+
+  .light-screen .brightness-lamp {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    width: 150px;
+    transform: translateX(-50%);
+    z-index: 7;
+    pointer-events: none;
+    opacity: calc(.88 + var(--lamp-glow, 0.18) * .18);
+    filter:
+      drop-shadow(0 0 calc(3px + var(--lamp-glow, 0.18) * 16px) rgba(255, 244, 215, calc(.16 + var(--lamp-glow, 0.18) * .42)))
+      drop-shadow(0 0 calc(6px + var(--lamp-glow, 0.18) * 20px) rgba(255, 220, 160, calc(.08 + var(--lamp-glow, 0.18) * .25)));
+  }
+
+  .light-screen .brightness-lamp img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .light-screen .brightness-beam {
+    position: absolute;
+    left: 50%;
+    top: 44px;
+    width: 162px;
+    height: 132px;
+    transform: translateX(-50%);
+    pointer-events: none;
+    z-index: 5;
+    opacity: 1;
+  }
+
+  .light-screen .brightness-beam::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    clip-path: polygon(37% 0%, 63% 0%, 100% 100%, 0% 100%);
+    background:
+      linear-gradient(to bottom,
+        rgba(255, 247, 225, calc(var(--beam-core, .12) * .95)) 0%,
+        rgba(255, 246, 221, calc(var(--beam-opacity, .16) * .82)) 22%,
+        rgba(255, 244, 218, calc(var(--beam-opacity, .16) * .38)) 52%,
+        rgba(255, 242, 214, calc(var(--beam-opacity, .16) * .12)) 76%,
+        rgba(255, 240, 210, 0) 100%);
+    filter: blur(1px);
+  }
+
+  .light-screen .brightness-beam::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 6px;
+    width: 118px;
+    height: 108px;
+    transform: translateX(-50%);
+    clip-path: polygon(40% 0%, 60% 0%, 90% 100%, 10% 100%);
+    background:
+      linear-gradient(to bottom,
+        rgba(255,255,255, calc(var(--beam-core, .12) * .62)) 0%,
+        rgba(255,255,255, calc(var(--beam-core, .12) * .18)) 72%,
+        rgba(255,255,255, 0) 100%);
+    filter: blur(8px);
+  }
+
+  .light-screen .temp-group {
+    top: 24px !important;
+    width: 132px !important;
+    height: 54px !important;
+    z-index: 8 !important;
+    align-items: center !important;
+  }
+
+  .light-screen .temp,
+  .light-screen .unit {
+    color: rgba(255,255,255, var(--value-opacity, .9)) !important;
+    text-shadow:
+      0 0 10px rgba(0,0,0,.55),
+      0 0 calc(5px + var(--value-glow, .15) * 20px) rgba(255,255,255,.66) !important;
+  }
+
+  .light-screen .temp {
+    font-size: 42px !important;
+    letter-spacing: -1px !important;
+  }
+
+  .light-screen .unit {
+    margin-left: 2px !important;
+    margin-top: 4px !important;
+    font-size: 20px !important;
+    line-height: 1 !important;
+  }
+
+  .light-screen .temp.off-text {
+    color: rgba(255,255,255,.72) !important;
+    font-size: 30px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0 !important;
+    text-shadow:
+      0 0 10px rgba(0,0,0,.6),
+      0 0 12px rgba(255,255,255,.14) !important;
+  }
+
+
+
+  /* 睡眠模式图标 */
+  .sleep-icon {
+    filter: drop-shadow(0 0 10px rgba(170, 205, 255, .22));
+  }
+
+  .sleep-moon {
+    fill: rgba(188, 222, 255, .94);
+    stroke: rgba(255,255,255,.72);
+    stroke-width: 1.1;
+    stroke-linejoin: round;
+  }
+
+  .sleep-star {
+    fill: rgba(255, 244, 180, .95);
+    filter: drop-shadow(0 0 6px rgba(255, 239, 164, .45));
+  }
+
+  .sleep-star-small {
+    opacity: .9;
+  }
+
+  .sleep-z {
+    fill: none;
+    stroke: rgba(230, 243, 255, .95);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 6px rgba(159, 212, 255, .32));
+  }
+
+  .sleep-z-small {
+    stroke-width: 2.0;
+    opacity: .95;
+  }
+
+  .sleep-screen .circle-surface::before {
+    background: radial-gradient(circle at 50% 30%, rgba(180, 218, 255, .12), rgba(255,255,255,0) 56%);
+    opacity: .8;
+  }
+
+  /* 色温页：房间背景 + 外圈旋钮（无刻度） */
+  .color-temp-screen .ticks {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  .color-temp-screen .mode-icon,
+  .color-temp-screen .room {
+    display: none !important;
+  }
+
+  .color-temp-screen .color-temp-photo {
+    position: absolute;
+    inset: 8px;
+    border-radius: 50%;
+    overflow: hidden;
+    z-index: 1;
+    box-shadow:
+      inset 0 0 16px rgba(0,0,0,.16),
+      inset 0 0 0 1px rgba(255,255,255,.16);
+  }
+
+  .color-temp-screen .color-temp-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center center;
+    filter:
+      brightness(var(--ct-photo-brightness, 0.90))
+      saturate(var(--ct-photo-saturate, 1.04))
+      contrast(1.03)
+      sepia(var(--ct-photo-sepia, 0.06));
+    transition: filter .18s linear;
+  }
+
+  .color-temp-screen .color-temp-photo::before,
+  .color-temp-screen .color-temp-photo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .color-temp-screen .color-temp-photo::before {
+    background:
+      radial-gradient(circle at 50% 44%, rgba(255,255,255,.18), rgba(255,255,255,0) 58%),
+      linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0) 38%),
+      rgba(255, 190, 92, 1);
+    mix-blend-mode: screen;
+    opacity: var(--ct-photo-warm-opacity, .16);
+  }
+
+  .color-temp-screen .color-temp-photo::after {
+    background:
+      radial-gradient(circle at 50% 42%, rgba(255,255,255,.14), rgba(255,255,255,0) 56%),
+      linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,0) 45%),
+      rgba(126, 214, 255, 1);
+    mix-blend-mode: screen;
+    opacity: var(--ct-photo-cool-opacity, .08);
+  }
+
+  .color-temp-screen .color-temp-knob {
+    position: absolute;
+    inset: 0;
+    z-index: 8;
+    pointer-events: none;
+  }
+
+  .color-temp-screen .color-temp-knob::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background:
+      radial-gradient(circle at 34% 32%, rgba(255,255,255,.98) 0%, rgba(255,255,255,.86) 18%, var(--ct-knob-color, rgba(255,236,180,.95)) 52%, rgba(16,22,30,.96) 100%);
+    box-shadow:
+      0 0 0 2px rgba(255,255,255,.18),
+      0 0 12px rgba(255,255,255,.10),
+      0 0 16px var(--ct-knob-color, rgba(255,236,180,.45)),
+      0 4px 12px rgba(0,0,0,.36);
+    transform: translate(-50%, -50%) rotate(var(--ct-knob-angle, -120deg)) translateY(-104px);
+  }
+
+  .color-temp-screen .color-temp-knob::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 210px;
+    height: 210px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.03);
+    opacity: .45;
+  }
+
+  .color-temp-screen .temp-group {
+    z-index: 7 !important;
+  }
+
+
+
+  /* v3 修正：仅保留亮度 / 睡眠 / 色温三页，并修正亮度与色温显示 */
+  .light-screen .brightness-photo img {
+    object-position: center 86% !important;
+    transform: scale(1.10) !important;
+    transform-origin: center center !important;
+    filter: brightness(var(--room-brightness, .84)) contrast(1.02) saturate(1.01) !important;
+  }
+
+  .light-screen .brightness-photo::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: 36px !important;
+    background: linear-gradient(to bottom, rgba(0,0,0,.34), rgba(0,0,0,0)) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .light-screen .room,
+  .color-temp-screen .room {
+    display: none !important;
+  }
+
+  .light-screen .brightness-lamp,
+  .light-screen .brightness-beam {
+    pointer-events: none !important;
+  }
+
+  .color-temp-screen .color-temp-knob,
+  .color-temp-screen .color-temp-knob::before,
+  .color-temp-screen .color-temp-knob::after {
+    display: none !important;
+  }
+
+  .color-temp-screen::before {
+    box-shadow:
+      inset 0 0 22px rgba(255,255,255,.025),
+      inset 0 0 26px rgba(0,0,0,.18),
+      0 0 18px var(--accent-soft) !important;
+  }
+
+  .color-temp-screen::after {
+    opacity: .46 !important;
+    background:
+      radial-gradient(circle at 50% 40%, rgba(255, 210, 110, .14), transparent 34%),
+      radial-gradient(circle at 50% 60%, rgba(0,0,0,.22), transparent 74%) !important;
+  }
+
+  .color-temp-screen .glass {
+    opacity: .34 !important;
+  }
+
+  .color-temp-screen .color-temp-photo img {
+    object-position: center center !important;
+    filter:
+      brightness(var(--ct-photo-brightness, 0.86))
+      saturate(var(--ct-photo-saturate, 1.04))
+      contrast(1.03)
+      sepia(var(--ct-photo-sepia, 0.06)) !important;
+  }
+
+
+
+  /* v4：亮度页背景改回沙发图，并裁掉原图顶部吊灯 */
+  .light-screen .brightness-photo {
+    inset: 7px !important;
+    z-index: 1 !important;
+    opacity: 1 !important;
+    background: #000 !important;
+  }
+
+  .light-screen .brightness-photo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center bottom !important;
+    transform: scale(1.08) !important;
+    transform-origin: center bottom !important;
+    filter: brightness(var(--room-brightness, .88)) contrast(1.02) saturate(1.02) !important;
+  }
+
+  .light-screen .brightness-photo::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: 48px !important;
+    background: linear-gradient(to bottom, rgba(0,0,0,.42), rgba(0,0,0,.06), rgba(0,0,0,0)) !important;
+    z-index: 1 !important;
+    pointer-events: none !important;
+  }
+
+  .light-screen .brightness-photo::after {
+    z-index: 2 !important;
+    background:
+      radial-gradient(circle at 50% 58%, rgba(0,0,0,0), rgba(0,0,0,.10) 72%, rgba(0,0,0,.32) 100%) !important;
+  }
+
+  .light-screen .brightness-lamp {
+    top: 16px !important;
+    width: 128px !important;
+    z-index: 7 !important;
+  }
+
+  .light-screen .brightness-beam {
+    top: 44px !important;
+    z-index: 5 !important;
+  }
+
+
+  /* v12：灯图内嵌并强制显示 */
+  .light-screen .brightness-lamp {
+    display: block !important;
+    visibility: visible !important;
+    opacity: calc(.92 + var(--lamp-glow, 0.18) * .08) !important;
+    top: 18px !important;
+    width: 132px !important;
+    z-index: 12 !important;
+    transform: translateX(-50%) !important;
+  }
+
+  .light-screen .brightness-lamp img {
+    display: block !important;
+    opacity: 1 !important;
+    width: 100% !important;
+    height: auto !important;
+  }
+
+  .light-screen .temp-group {
+    z-index: 13 !important;
+  }
+
+
+  /* v14：色温页使用最新上传的吊灯客厅图 */
+  .color-temp-screen .color-temp-photo img {
+    object-position: center center !important;
+    object-fit: cover !important;
+  }
+
+
+  /* v15：亮度页换成用户最新上传图片，隐藏之前单独叠加的灯和光束 */
+  .light-screen .brightness-photo img {
+    object-fit: cover !important;
+    object-position: center top !important;
+  }
+
+  .light-screen .brightness-lamp,
+  .light-screen .brightness-beam {
+    display: none !important;
+  }
+
+
+
+  /* v16：去掉外部灯和光束，改为给图片里的灯加发光与下射光束 */
+  .light-screen .brightness-photo {
+    overflow: hidden !important;
+  }
+
+  .light-screen .brightness-lamp,
+  .light-screen .brightness-beam {
+    display: none !important;
+  }
+
+  .light-screen .brightness-photo .in-image-lamp-glow {
+    position: absolute !important;
+    left: 50% !important;
+    top: 12% !important;
+    width: 48% !important;
+    height: 15% !important;
+    transform: translateX(-50%) !important;
+    pointer-events: none !important;
+    z-index: 4 !important;
+    border-radius: 50% !important;
+    background:
+      radial-gradient(ellipse at center,
+        rgba(255,248,236, calc(0.12 + var(--lamp-glow, .35) * 0.38)) 0%,
+        rgba(255,244,224, calc(0.08 + var(--lamp-glow, .35) * 0.22)) 34%,
+        rgba(255,240,218, 0.08) 54%,
+        rgba(255,240,218, 0) 76%) !important;
+    filter: blur(6px) !important;
+    mix-blend-mode: screen !important;
+    opacity: 1 !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam {
+    position: absolute !important;
+    left: 50% !important;
+    top: 20% !important;
+    width: 74% !important;
+    height: 50% !important;
+    transform: translateX(-50%) !important;
+    pointer-events: none !important;
+    z-index: 3 !important;
+    opacity: calc(0.16 + var(--beam-opacity, .35) * 0.82) !important;
+    background:
+      radial-gradient(ellipse at 50% 8%,
+        rgba(255,250,240, calc(0.18 + var(--beam-core, .2) * 0.72)) 0%,
+        rgba(255,247,234, calc(0.10 + var(--beam-core, .2) * 0.42)) 18%,
+        rgba(255,245,228, 0) 42%),
+      linear-gradient(to bottom,
+        rgba(255,249,238, calc(0.20 + var(--beam-opacity, .35) * 0.28)) 0%,
+        rgba(255,246,230, calc(0.14 + var(--beam-opacity, .35) * 0.22)) 24%,
+        rgba(255,244,226, calc(0.10 + var(--beam-opacity, .35) * 0.16)) 48%,
+        rgba(255,242,220, calc(0.05 + var(--beam-opacity, .35) * 0.07)) 72%,
+        rgba(255,242,220, 0) 100%) !important;
+    clip-path: polygon(34% 0%, 66% 0%, 88% 100%, 12% 100%) !important;
+    filter: blur(2.4px) !important;
+    mix-blend-mode: screen !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(to bottom,
+      rgba(255,251,243, calc(0.10 + var(--beam-core, .2) * 0.34)) 0%,
+      rgba(255,248,236, calc(0.08 + var(--beam-core, .2) * 0.22)) 36%,
+      rgba(255,245,230, 0) 100%) !important;
+    clip-path: polygon(40% 0%, 60% 0%, 74% 100%, 26% 100%) !important;
+    filter: blur(1.2px) !important;
+  }
+
+
+  /* v19：压掉原图自带光束，并让新增光束更发散 */
+  .light-screen .brightness-photo .original-beam-cover {
+    position: absolute !important;
+    left: 50% !important;
+    top: 22% !important;
+    width: 32% !important;
+    height: 50% !important;
+    transform: translateX(-50%) !important;
+    pointer-events: none !important;
+    z-index: 2 !important;
+    background:
+      linear-gradient(to bottom,
+        rgba(24, 25, 23, .34) 0%,
+        rgba(24, 25, 23, .30) 30%,
+        rgba(24, 25, 23, .22) 60%,
+        rgba(24, 25, 23, 0) 100%) !important;
+    filter: blur(8px) !important;
+    mix-blend-mode: multiply !important;
+    clip-path: polygon(38% 0%, 62% 0%, 72% 100%, 28% 100%) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-lamp-glow {
+    width: 62% !important;
+    height: 18% !important;
+    top: 10% !important;
+    filter: blur(8px) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam {
+    top: 19% !important;
+    width: 88% !important;
+    height: 58% !important;
+    opacity: calc(0.14 + var(--beam-opacity, .35) * 0.86) !important;
+    clip-path: polygon(28% 0%, 72% 0%, 100% 100%, 0% 100%) !important;
+    filter: blur(4px) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::before {
+    clip-path: polygon(38% 0%, 62% 0%, 82% 100%, 18% 100%) !important;
+    filter: blur(3px) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 0 !important;
+    width: 70% !important;
+    height: 100% !important;
+    transform: translateX(-50%) !important;
+    pointer-events: none !important;
+    background:
+      linear-gradient(to bottom,
+        rgba(255, 250, 236, calc(0.08 + var(--beam-core, .2) * 0.24)) 0%,
+        rgba(255, 247, 230, calc(0.06 + var(--beam-core, .2) * 0.18)) 42%,
+        rgba(255, 245, 226, 0) 100%) !important;
+    clip-path: polygon(42% 0%, 58% 0%, 96% 100%, 4% 100%) !important;
+    filter: blur(9px) !important;
+  }
+
+
+  /* v20：亮度页背景暗一点，光束仍然独立变化 */
+  .light-screen .brightness-photo img {
+    filter: brightness(var(--room-brightness, .70)) contrast(1.03) saturate(1.02) !important;
+  }
+
+
+  /* v22：修复黑块，原图光束只做柔和弱化，不再出现黑色硬块 */
+  .light-screen .brightness-photo .original-beam-cover {
+    display: none !important;
+  }
+
+  .light-screen .brightness-photo img {
+    filter: brightness(var(--room-brightness, .70)) contrast(1.02) saturate(1.02) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam {
+    top: 18% !important;
+    width: 92% !important;
+    height: 60% !important;
+    clip-path: polygon(22% 0%, 78% 0%, 100% 100%, 0% 100%) !important;
+    filter: blur(6px) !important;
+    opacity: calc(0.10 + var(--beam-opacity, .35) * 0.82) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::before {
+    clip-path: polygon(34% 0%, 66% 0%, 84% 100%, 16% 100%) !important;
+    filter: blur(4px) !important;
+  }
+
+
+  /* v23：低亮度时也能看到光束，20% 以下保留柔和弱光 */
+  .light-screen .brightness-photo .in-image-beam {
+    opacity: calc(0.22 + var(--beam-opacity, .24) * 0.72) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::before {
+    background: linear-gradient(to bottom,
+      rgba(255,251,243, calc(0.14 + var(--beam-core, .16) * 0.38)) 0%,
+      rgba(255,248,236, calc(0.10 + var(--beam-core, .16) * 0.24)) 36%,
+      rgba(255,245,230, 0) 100%) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-lamp-glow {
+    opacity: .92 !important;
+  }
+
+
+  /* v24：亮度 OFF 时彻底关闭光束和灯光 */
+  .light-screen .brightness-photo .in-image-beam {
+    opacity: calc(var(--beam-opacity, 0) * 1.0) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-lamp-glow {
+    opacity: calc(var(--lamp-glow, 0) * 1.35) !important;
+  }
+
+
+
+  /* v25：让亮度模式的光更明显、更亮、更有存在感 */
+  .light-screen .brightness-photo .in-image-lamp-glow {
+    width: 70% !important;
+    height: 22% !important;
+    top: 9% !important;
+    filter: blur(10px) !important;
+    background:
+      radial-gradient(ellipse at center,
+        rgba(255,249,238, calc(0.20 + var(--lamp-glow, .22) * 0.68)) 0%,
+        rgba(255,244,226, calc(0.12 + var(--lamp-glow, .22) * 0.36)) 30%,
+        rgba(255,240,220, 0.08) 52%,
+        rgba(255,240,220, 0) 78%) !important;
+    opacity: calc(var(--lamp-glow, 0) * 1.45) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam {
+    top: 17% !important;
+    width: 96% !important;
+    height: 64% !important;
+    clip-path: polygon(24% 0%, 76% 0%, 100% 100%, 0% 100%) !important;
+    filter: blur(5px) !important;
+    opacity: calc(var(--beam-opacity, 0) * 1.12) !important;
+    background:
+      radial-gradient(ellipse at 50% 7%,
+        rgba(255,252,244, calc(0.26 + var(--beam-core, .18) * 0.82)) 0%,
+        rgba(255,248,234, calc(0.18 + var(--beam-core, .18) * 0.50)) 18%,
+        rgba(255,245,228, 0) 40%),
+      linear-gradient(to bottom,
+        rgba(255,250,240, calc(0.26 + var(--beam-opacity, .3) * 0.36)) 0%,
+        rgba(255,247,232, calc(0.20 + var(--beam-opacity, .3) * 0.28)) 20%,
+        rgba(255,245,228, calc(0.14 + var(--beam-opacity, .3) * 0.20)) 46%,
+        rgba(255,243,224, calc(0.08 + var(--beam-opacity, .3) * 0.10)) 74%,
+        rgba(255,243,224, 0) 100%) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::before {
+    background: linear-gradient(to bottom,
+      rgba(255,252,245, calc(0.22 + var(--beam-core, .16) * 0.48)) 0%,
+      rgba(255,249,238, calc(0.16 + var(--beam-core, .16) * 0.32)) 34%,
+      rgba(255,245,230, 0) 100%) !important;
+    clip-path: polygon(34% 0%, 66% 0%, 86% 100%, 14% 100%) !important;
+    filter: blur(4px) !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam::after {
+    content: "" !important;
+    position: absolute !important;
+    left: 50% !important;
+    top: 2% !important;
+    width: 82% !important;
+    height: 100% !important;
+    transform: translateX(-50%) !important;
+    pointer-events: none !important;
+    background: linear-gradient(to bottom,
+      rgba(255,251,241, calc(0.14 + var(--beam-core, .18) * 0.24)) 0%,
+      rgba(255,247,232, calc(0.10 + var(--beam-core, .18) * 0.18)) 40%,
+      rgba(255,245,228, 0) 100%) !important;
+    clip-path: polygon(31% 0%, 69% 0%, 100% 100%, 0% 100%) !important;
+    filter: blur(10px) !important;
+  }
+
+
+  /* v27：亮度背景整体往上挪一点，让下方客厅露出来更多 */
+  .light-screen .brightness-photo img {
+    object-position: center top !important;
+    transform: translateY(-10px) scale(1.04) !important;
+    transform-origin: center center !important;
+  }
+
+  .light-screen .brightness-photo .in-image-lamp-glow {
+    top: 7% !important;
+  }
+
+  .light-screen .brightness-photo .in-image-beam {
+    top: 15% !important;
+    height: 68% !important;
+  }
+
+
+  /* v28：光束位置不动，只把亮度背景继续往上移 */
+  .light-screen .brightness-photo img {
+    object-position: center top !important;
+    transform: translateY(-18px) scale(1.04) !important;
+    transform-origin: center center !important;
+  }
+
+
+  /* v29：亮度背景继续往上移，让下方客厅更多露出来，灯可以被上方裁掉 */
+  .light-screen .brightness-photo img {
+    object-position: center top !important;
+    transform: translateY(-42px) scale(1.04) !important;
+    transform-origin: center center !important;
+  }
+
+
+  /* v30：修复底部黑块。背景不再向上硬移，改为完整铺满圆形，下面客厅不会被裁黑 */
+  .light-screen .brightness-photo {
+    background: transparent !important;
+  }
+
+  .light-screen .brightness-photo img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center bottom !important;
+    transform: none !important;
+    transform-origin: center center !important;
+  }
+
+  .light-screen .brightness-photo::after {
+    background:
+      radial-gradient(circle at 50% 58%, rgba(0,0,0,0), rgba(0,0,0,.08) 74%, rgba(0,0,0,.22) 100%) !important;
+  }
+
+
+  /* v31：亮度百分比移动到底部 */
+  .light-screen .temp-group {
+    top: auto !important;
+    bottom: 18px !important;
+    width: 120px !important;
+    height: 44px !important;
+    z-index: 14 !important;
+  }
+
+  .light-screen .temp {
+    font-size: 38px !important;
+    line-height: 1 !important;
+  }
+
+  .light-screen .unit {
+    font-size: 18px !important;
+    line-height: 1 !important;
+  }
+
+  /* v31：色温最高值降低蓝感，改成偏自然冷白 */
+  .color-temp-screen .color-temp-photo::before {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(255, 238, 210, calc(var(--warm-tint, 0) * .22)),
+        rgba(220, 232, 240, calc(var(--cool-tint, 0) * .16))
+      ) !important;
+    mix-blend-mode: soft-light !important;
+  }
+
+  .color-temp-screen .color-temp-photo::after {
+    background:
+      radial-gradient(circle at 50% 45%,
+        rgba(255,255,255,0),
+        rgba(120,135,148, calc(.08 + var(--cool-tint, 0) * .08)) 100%) !important;
+  }
+
 </style>
 </head>
 <body>
@@ -802,7 +1694,7 @@
     7: 0.48
   };
 
-  const modes = [
+  let modes = [
 
     {
       key: "ac-cool",
@@ -950,6 +1842,39 @@
         const hue = 156 + t * 42;
         const saturation = 92 - t * 6;
         const lightness = 58 - t * 4;
+        return `hsl(${hue} ${saturation}% ${lightness}%)`;
+      },
+      valueFromIndex(index) {
+        return Math.round(this.min + (this.max - this.min) * index / (STEP_COUNT - 1));
+      }
+    },
+    {
+      key: "sleep",
+      name: "睡眠",
+      className: "sleep-screen",
+      min: 16,
+      max: 32,
+      initial: 26,
+      unit: "°C",
+      hasFan: true,
+      fanBarColors: ["#80b8ff", "#9ac5ff", "#7ec7ff", "#8ecdf2", "#8fd6e8", "#8fe2da", "#a6e8cf"],
+      iconHTML: `
+        <div class="mode-icon sleep-icon">
+          <svg class="mode-icon-svg" viewBox="0 0 48 48" aria-hidden="true">
+            <path class="sleep-moon" d="M29.5 10.2C22.3 10.2 16.4 16 16.4 23.2C16.4 30.4 22.3 36.3 29.5 36.3C33.3 36.3 36.7 34.7 39.1 32.0C37.5 32.6 35.8 32.9 34.0 32.9C26.8 32.9 21.0 27.1 21.0 19.9C21.0 17.7 21.5 15.7 22.5 13.9C24.5 11.5 26.8 10.2 29.5 10.2Z"/>
+            <path class="sleep-star" d="M13.2 15.0L14.0 17.0L16.0 17.8L14.0 18.6L13.2 20.6L12.4 18.6L10.4 17.8L12.4 17.0Z"/>
+            <path class="sleep-star sleep-star-small" d="M35.8 13.0L36.3 14.2L37.5 14.7L36.3 15.2L35.8 16.4L35.3 15.2L34.1 14.7L35.3 14.2Z"/>
+            <path class="sleep-z" d="M31.8 8.8H38.1L33.2 15.2H38.0"/>
+            <path class="sleep-z sleep-z-small" d="M35.0 18.4H39.3L36.1 22.8H39.2"/>
+          </svg>
+        </div>
+      `,
+      bottomHTML: homeRoomHTML(),
+      tickColor(index) {
+        const t = index / (STEP_COUNT - 1);
+        const hue = 224 - t * 54;
+        const saturation = 96 - t * 18;
+        const lightness = 72 - t * 16;
         return `hsl(${hue} ${saturation}% ${lightness}%)`;
       },
       valueFromIndex(index) {
@@ -1232,7 +2157,9 @@
     screen.setAttribute("aria-label", `${mode.name}模式效果图`);
 
     screen.innerHTML = `
-      <div class="ticks"></div>
+            <div class="ticks"></div>
+      ${mode.key === "light" ? '<div class="brightness-photo"><img src="assets/brightness_bg.png" alt=""></div>' : ""}
+      ${mode.key === "color-temp" ? '<div class="color-temp-photo"><img src="assets/color_temp_bg.png" alt=""></div><div class="color-temp-knob"></div>' : ""}
       ${mode.iconHTML}
       ${valueDisplayHTML(mode, state)}
       ${mode.hasFan ? fanAreaHTML() : ""}
@@ -1240,6 +2167,26 @@
       <div class="toast"></div>
       <div class="glass"></div>
     `;
+
+    if (mode.key === "color-temp") {
+      const photo = screen.querySelector(".brightness-photo");
+      if (photo) {
+        photo.className = "color-temp-photo";
+        const img = photo.querySelector("img");
+        if (img) img.src = "assets/color_temp_bg.png";
+      }
+    }
+
+    if (mode.key === "light") {
+      const beam = document.createElement("div");
+      beam.className = "brightness-beam";
+      screen.appendChild(beam);
+
+      const lamp = document.createElement("div");
+      lamp.className = "brightness-lamp";
+      lamp.innerHTML = '';
+      screen.appendChild(lamp);
+    }
 
     const ticks = screen.querySelector(".ticks");
     for (let i = 0; i < STEP_COUNT; i++) {
@@ -1369,16 +2316,26 @@
     const t = currentIndex / (STEP_COUNT - 1);
 
     if (mode.key === "light") {
-      const white = "rgb(255, 255, 255)";
-      const surface1 = withAlpha(white, 0.04 + t * 0.24);
-      const surface2 = withAlpha(white, 0.01 + t * 0.12);
-      const glowInner = withAlpha(white, 0.03 + t * 0.24);
-      const glowOuter = withAlpha(white, 0.01 + t * 0.20);
+      /* v24：OFF 状态完全无光束；有亮度后再逐渐出现光束 */
+      const roomBrightness = 0.70;
+      const isOff = t <= 0.0001;
+      const beamOpacity = isOff ? 0 : (0.28 + t * 0.72);
+      const beamCore = isOff ? 0 : (0.16 + t * 0.60);
+      const lampGlow = isOff ? 0 : (0.20 + t * 0.42);
+      const valueOpacity = 0.72 + t * 0.28;
+      const valueGlow = 0.10 + t * 0.60;
 
-      screen.style.setProperty("--dynamic-surface-1", surface1);
-      screen.style.setProperty("--dynamic-surface-2", surface2);
-      screen.style.setProperty("--dynamic-glow-inner", glowInner);
-      screen.style.setProperty("--dynamic-glow-outer", glowOuter);
+      screen.style.setProperty("--dynamic-surface-1", "rgba(255,255,255,0)");
+      screen.style.setProperty("--dynamic-surface-2", "rgba(255,255,255,0)");
+      screen.style.setProperty("--dynamic-glow-inner", withAlpha("rgb(255, 236, 196)", 0.05));
+      screen.style.setProperty("--dynamic-glow-outer", withAlpha("rgb(255, 228, 168)", 0.04));
+
+      screen.style.setProperty("--room-brightness", roomBrightness.toFixed(3));
+      screen.style.setProperty("--beam-opacity", beamOpacity.toFixed(3));
+      screen.style.setProperty("--beam-core", beamCore.toFixed(3));
+      screen.style.setProperty("--lamp-glow", lampGlow.toFixed(3));
+      screen.style.setProperty("--value-opacity", valueOpacity.toFixed(3));
+      screen.style.setProperty("--value-glow", valueGlow.toFixed(3));
       return;
     }
 
@@ -1387,11 +2344,22 @@
       const surface2 = withAlpha(currentColor, 0.05 + t * 0.06);
       const glowInner = withAlpha(currentColor, 0.10 + t * 0.12);
       const glowOuter = withAlpha(currentColor, 0.06 + t * 0.10);
+      const warmFactor = Math.max(0, 1 - t / 0.52);
+      const coolFactor = Math.max(0, (t - 0.52) / 0.48) * 0.55;
+      const angle = START_ANGLE + (END_ANGLE - START_ANGLE) * t;
 
       screen.style.setProperty("--dynamic-surface-1", surface1);
       screen.style.setProperty("--dynamic-surface-2", surface2);
       screen.style.setProperty("--dynamic-glow-inner", glowInner);
       screen.style.setProperty("--dynamic-glow-outer", glowOuter);
+
+      screen.style.setProperty("--ct-knob-angle", `${angle}deg`);
+      screen.style.setProperty("--ct-knob-color", currentColor);
+      screen.style.setProperty("--ct-photo-brightness", (0.72 + t * 0.12).toFixed(3));
+      screen.style.setProperty("--ct-photo-saturate", (1.00 + t * 0.16).toFixed(3));
+      screen.style.setProperty("--ct-photo-sepia", (0.20 * warmFactor).toFixed(3));
+      screen.style.setProperty("--ct-photo-warm-opacity", (0.10 + 0.24 * warmFactor).toFixed(3));
+      screen.style.setProperty("--ct-photo-cool-opacity", (0.06 + 0.24 * coolFactor).toFixed(3));
       return;
     }
 
@@ -1453,6 +2421,9 @@
   }
 
   function pointerInArcArea(screen, event) {
+    const index = Number(screen.dataset.modeIndex);
+    const mode = modes[index];
+
     const rect = screen.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
     const cy = rect.top + rect.height / 2;
@@ -1610,6 +2581,85 @@
     activePointerId = null;
     setSliderTranslate(currentTranslate(), true);
   });
+
+  // v14：强制把色温页背景替换成用户最新上传的吊灯客厅图
+  function forceColorTempImageV14() {
+    document.querySelectorAll(".color-temp-screen .color-temp-photo img").forEach((img) => {
+      img.src = "assets/color_temp_bg.png";
+      img.style.objectPosition = "center center";
+      img.style.objectFit = "cover";
+    });
+  }
+  forceColorTempImageV14();
+  window.addEventListener("load", forceColorTempImageV14);
+  setTimeout(forceColorTempImageV14, 300);
+
+
+  // v15：强制把亮度页背景替换成用户最新上传的矩形吊灯客厅图
+  function forceBrightnessImageV15() {
+    document.querySelectorAll(".light-screen .brightness-photo img").forEach((img) => {
+      img.src = "assets/brightness_bg.png";
+      img.style.objectFit = "cover";
+      img.style.objectPosition = "center top";
+    });
+  }
+  forceBrightnessImageV15();
+  window.addEventListener("load", forceBrightnessImageV15);
+  setTimeout(forceBrightnessImageV15, 300);
+
+
+  // v16：给亮度模式图片里的灯添加光晕和下射光束
+  function enhanceBrightnessPhotoBeamV16() {
+    document.querySelectorAll('.light-screen .brightness-photo').forEach((photo) => {
+      if (!photo.querySelector('.in-image-lamp-glow')) {
+        const glow = document.createElement('div');
+        glow.className = 'in-image-lamp-glow';
+        photo.appendChild(glow);
+      }
+      if (!photo.querySelector('.in-image-beam')) {
+        const beam = document.createElement('div');
+        beam.className = 'in-image-beam';
+        photo.appendChild(beam);
+      }
+    });
+  }
+  enhanceBrightnessPhotoBeamV16();
+  window.addEventListener('load', enhanceBrightnessPhotoBeamV16);
+  setTimeout(enhanceBrightnessPhotoBeamV16, 200);
+
+
+  // v19：添加遮罩层压掉原图自带光束
+  function hideOriginalBeamV19() {
+    document.querySelectorAll('.light-screen .brightness-photo').forEach((photo) => {
+      if (!photo.querySelector('.original-beam-cover')) {
+        const cover = document.createElement('div');
+        cover.className = 'original-beam-cover';
+        const beam = photo.querySelector('.in-image-beam');
+        if (beam) {
+          photo.insertBefore(cover, beam);
+        } else {
+          photo.appendChild(cover);
+        }
+      }
+    });
+  }
+  hideOriginalBeamV19();
+  window.addEventListener('load', hideOriginalBeamV19);
+  setTimeout(hideOriginalBeamV19, 300);
+
+
+  // v22：使用柔和处理后的亮度背景，避免黑块
+  function forceBrightnessImageV22() {
+    document.querySelectorAll(".light-screen .brightness-photo img").forEach((img) => {
+      img.src = "assets/brightness_bg.png";
+      img.style.objectFit = "cover";
+      img.style.objectPosition = "center top";
+    });
+  }
+  forceBrightnessImageV22();
+  window.addEventListener("load", forceBrightnessImageV22);
+  setTimeout(forceBrightnessImageV22, 300);
+
 </script>
 </body>
 </html>
