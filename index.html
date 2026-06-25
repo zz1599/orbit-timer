@@ -2158,8 +2158,8 @@
 
     screen.innerHTML = `
             <div class="ticks"></div>
-      ${mode.key === "light" ? '<div class="brightness-photo"><img src="assets/brightness_bg.png" alt=""></div>' : ""}
-      ${mode.key === "color-temp" ? '<div class="color-temp-photo"><img src="assets/color_temp_bg.png" alt=""></div><div class="color-temp-knob"></div>' : ""}
+      ${mode.key === "light" ? '<div class="brightness-photo"><img src="brightness_bg.png" alt=""></div>' : ""}
+      ${mode.key === "color-temp" ? '<div class="color-temp-photo"><img src="color_temp_bg.png" alt=""></div><div class="color-temp-knob"></div>' : ""}
       ${mode.iconHTML}
       ${valueDisplayHTML(mode, state)}
       ${mode.hasFan ? fanAreaHTML() : ""}
@@ -2173,7 +2173,7 @@
       if (photo) {
         photo.className = "color-temp-photo";
         const img = photo.querySelector("img");
-        if (img) img.src = "assets/color_temp_bg.png";
+        if (img) img.src = "color_temp_bg.png";
       }
     }
 
@@ -2585,7 +2585,7 @@
   // v14：强制把色温页背景替换成用户最新上传的吊灯客厅图
   function forceColorTempImageV14() {
     document.querySelectorAll(".color-temp-screen .color-temp-photo img").forEach((img) => {
-      img.src = "assets/color_temp_bg.png";
+      img.src = "color_temp_bg.png";
       img.style.objectPosition = "center center";
       img.style.objectFit = "cover";
     });
@@ -2598,7 +2598,7 @@
   // v15：强制把亮度页背景替换成用户最新上传的矩形吊灯客厅图
   function forceBrightnessImageV15() {
     document.querySelectorAll(".light-screen .brightness-photo img").forEach((img) => {
-      img.src = "assets/brightness_bg.png";
+      img.src = "brightness_bg.png";
       img.style.objectFit = "cover";
       img.style.objectPosition = "center top";
     });
@@ -2651,7 +2651,7 @@
   // v22：使用柔和处理后的亮度背景，避免黑块
   function forceBrightnessImageV22() {
     document.querySelectorAll(".light-screen .brightness-photo img").forEach((img) => {
-      img.src = "assets/brightness_bg.png";
+      img.src = "brightness_bg.png";
       img.style.objectFit = "cover";
       img.style.objectPosition = "center top";
     });
